@@ -15,11 +15,11 @@ public class EventManApplication {
 
     @GetMapping("/")
     public String home() {
-        return "EventMan Backend is running!";
+        return "Festify Backend is running!";
     }
 
     @GetMapping("/api/test/public")
     public String test() {
-        return "EventMan Backend is running! - Public endpoint";
+        return "Festify Backend is running! - Public endpoint";
     }
 }

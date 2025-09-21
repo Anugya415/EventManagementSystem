@@ -14,7 +14,7 @@ export default function CreateEventPage() {
     location: '',
     capacity: '',
     price: '',
-    currency: 'USD',
+    currency: 'INR',
     category: '',
     tags: '',
   });
@@ -36,6 +36,17 @@ export default function CreateEventPage() {
     setLoading(true);
     setError('');
     setSuccess(false);
+
+    // Validate time: end time must be after start time
+    if (formData.startTime && formData.endTime) {
+      const startTime = new Date(`${formData.date}T${formData.startTime}`);
+      const endTime = new Date(`${formData.date}T${formData.endTime}`);
+      if (endTime <= startTime) {
+        setError('End time must be after start time');
+        setLoading(false);
+        return;
+      }
+    }
 
     try {
       // Format the data for the backend
@@ -182,10 +193,12 @@ export default function CreateEventPage() {
                 type="date"
                 name="date"
                 required
+                min={new Date().toISOString().split('T')[0]}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={formData.date}
                 onChange={handleChange}
               />
+              <p className="text-xs text-gray-500 mt-1">Select a future date</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -199,6 +212,7 @@ export default function CreateEventPage() {
                 value={formData.startTime}
                 onChange={handleChange}
               />
+              <p className="text-xs text-gray-500 mt-1">Format: HH:MM (24-hour)</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -212,8 +226,25 @@ export default function CreateEventPage() {
                 value={formData.endTime}
                 onChange={handleChange}
               />
+              <p className="text-xs text-gray-500 mt-1">Must be after start time</p>
             </div>
           </div>
+          {formData.startTime && formData.endTime && (
+            <div className="mt-4 p-3 bg-blue-50 rounded-md">
+              <p className="text-sm text-blue-700">
+                <strong>Duration:</strong> {
+                  (() => {
+                    const start = new Date(`2000-01-01T${formData.startTime}`);
+                    const end = new Date(`2000-01-01T${formData.endTime}`);
+                    const diff = Math.abs(end - start);
+                    const hours = Math.floor(diff / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    return `${hours}h ${minutes}m`;
+                  })()
+                }
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Location and Capacity */}
@@ -274,15 +305,11 @@ export default function CreateEventPage() {
               </label>
               <select
                 name="currency"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
                 value={formData.currency}
-                onChange={handleChange}
+                disabled
               >
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
-                <option value="GBP">GBP (£)</option>
-                <option value="CAD">CAD (C$)</option>
-                <option value="AUD">AUD (A$)</option>
+                <option value="INR">INR (₹)</option>
               </select>
             </div>
             <div>

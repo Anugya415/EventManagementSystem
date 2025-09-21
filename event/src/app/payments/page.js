@@ -10,7 +10,7 @@ export default function PaymentsPage() {
       id: 'TXN001',
       attendee: 'John Smith',
       event: 'Tech Conference 2024',
-      amount: '$299.00',
+      amount: '₹2,390',
       status: 'completed',
       method: 'Credit Card',
       date: '2024-09-10',
@@ -20,7 +20,7 @@ export default function PaymentsPage() {
       id: 'TXN002',
       attendee: 'Sarah Johnson',
       event: 'Tech Conference 2024',
-      amount: '$149.00',
+      amount: '₹1,192',
       status: 'completed',
       method: 'PayPal',
       date: '2024-09-09',
@@ -30,7 +30,7 @@ export default function PaymentsPage() {
       id: 'TXN003',
       attendee: 'Mike Davis',
       event: 'Wedding Ceremony',
-      amount: '$150.00',
+      amount: '₹1,200',
       status: 'pending',
       method: 'Credit Card',
       date: '2024-09-08',
@@ -40,7 +40,7 @@ export default function PaymentsPage() {
       id: 'TXN004',
       attendee: 'Emily Chen',
       event: 'Music Festival',
-      amount: '$80.00',
+      amount: '₹640',
       status: 'completed',
       method: 'Credit Card',
       date: '2024-09-07',
@@ -50,7 +50,7 @@ export default function PaymentsPage() {
       id: 'TXN005',
       attendee: 'David Wilson',
       event: 'Tech Conference 2024',
-      amount: '$149.00',
+      amount: '₹1,192',
       status: 'refunded',
       method: 'Credit Card',
       date: '2024-09-06',
@@ -105,7 +105,7 @@ export default function PaymentsPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <h3 className="text-sm font-medium text-gray-500">Total Revenue</h3>
-          <p className="text-3xl font-bold text-gray-900">$186,500</p>
+          <p className="text-3xl font-bold text-gray-900">₹14,92,000</p>
           <p className="text-sm text-green-600 mt-1">+8% from last month</p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-sm border">
@@ -120,7 +120,7 @@ export default function PaymentsPage() {
         </div>
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <h3 className="text-sm font-medium text-gray-500">Refunds</h3>
-          <p className="text-3xl font-bold text-red-600">$2,450</p>
+          <p className="text-3xl font-bold text-red-600">₹19,600</p>
           <p className="text-sm text-gray-600 mt-1">This month</p>
         </div>
       </div>
@@ -231,12 +231,27 @@ export default function PaymentsPage() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
-                      <button className="text-blue-600 hover:text-blue-900">View</button>
+                      <button
+                        onClick={() => alert(`Payment Details:\nID: ${transaction.id}\nAmount: ₹${transaction.amount}\nStatus: ${transaction.status}\nMethod: ${transaction.method}\nDate: ${transaction.date}\nAttendee: ${transaction.attendee}\nEvent: ${transaction.event}\nTicket: ${transaction.ticketType}`)}
+                        className="text-blue-600 hover:text-blue-900"
+                      >
+                        View
+                      </button>
                       {transaction.status === 'completed' && (
-                        <button className="text-red-600 hover:text-red-900">Refund</button>
+                        <button
+                          onClick={() => alert('Refund initiated for transaction ' + transaction.id)}
+                          className="text-red-600 hover:text-red-900"
+                        >
+                          Refund
+                        </button>
                       )}
                       {transaction.status === 'pending' && (
-                        <button className="text-green-600 hover:text-green-900">Process</button>
+                        <button
+                          onClick={() => alert('Payment processed successfully for transaction ' + transaction.id)}
+                          className="text-green-600 hover:text-green-900"
+                        >
+                          Process
+                        </button>
                       )}
                     </div>
                   </td>

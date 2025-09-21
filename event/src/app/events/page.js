@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../components/AuthContext';
+import { useNotification } from '../../components/NotificationContext';
 import PermissionGuard, { ActionButton, usePermission } from '../../components/PermissionGuard';
 
 export default function EventsPage() {
@@ -12,6 +13,7 @@ export default function EventsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { isAuthenticated } = useAuth();
+  const { showNotification } = useNotification();
   const canModifyEvents = usePermission(['ADMIN', 'ORGANIZER']);
 
   // Fetch events from backend
@@ -59,13 +61,13 @@ export default function EventsPage() {
       if (response.ok) {
         // Remove event from local state
         setEvents(prevEvents => prevEvents.filter(event => event.id !== eventId));
-        alert('Event deleted successfully!');
+        showNotification('Event deleted successfully!', 'success');
       } else {
         const errorData = await response.json();
-        alert(`Failed to delete event: ${errorData.message || 'Unknown error'}`);
+        showNotification(`Failed to delete event: ${errorData.message || 'Unknown error'}`, 'error');
       }
     } catch (err) {
-      alert('Network error. Please check if the backend server is running.');
+      showNotification('Network error. Please check if the backend server is running.', 'error');
     }
   };
 
@@ -84,7 +86,7 @@ export default function EventsPage() {
       status: 'active',
       attendees: 450,
       capacity: 500,
-      revenue: '$13,500',
+      revenue: '₹1,08,000',
       type: 'Conference',
     },
     {
@@ -95,7 +97,7 @@ export default function EventsPage() {
       status: 'active',
       attendees: 120,
       capacity: 150,
-      revenue: '$18,000',
+      revenue: '₹1,44,000',
       type: 'Wedding',
     },
     {
@@ -106,7 +108,7 @@ export default function EventsPage() {
       status: 'active',
       attendees: 1200,
       capacity: 2000,
-      revenue: '$96,000',
+      revenue: '₹7,68,000',
       type: 'Festival',
     },
     {
@@ -117,7 +119,7 @@ export default function EventsPage() {
       status: 'draft',
       attendees: 0,
       capacity: 100,
-      revenue: '$0',
+      revenue: '₹0',
       type: 'Webinar',
     },
     {
@@ -128,7 +130,7 @@ export default function EventsPage() {
       status: 'completed',
       attendees: 75,
       capacity: 80,
-      revenue: '$3,750',
+      revenue: '₹30,000',
       type: 'Workshop',
     },
   ];
@@ -212,7 +214,7 @@ export default function EventsPage() {
         </div>
         <PermissionGuard
           roles={['ADMIN', 'ORGANIZER']}
-          fallback={<div className="text-sm text-gray-500">You don't have permission to create events</div>}
+          fallback={<div className="text-sm text-gray-500">You don&apos;t have permission to create events</div>}
         >
           <Link
             href="/events/create"
@@ -284,7 +286,7 @@ export default function EventsPage() {
                 const eventStatus = event.status?.toLowerCase() || 'active';
                 const attendees = event.currentAttendees || event.attendees || 0;
                 const capacity = event.capacity || 100;
-                const revenue = event.price ? `$${event.price}` : (event.revenue || '$0');
+                const revenue = event.price ? `₹${event.price}` : (event.revenue || '₹0');
 
                 return (
                   <tr key={event.id} className="hover:bg-gray-50">
@@ -320,7 +322,12 @@ export default function EventsPage() {
                         >
                           Edit
                         </ActionButton>
-                        <button className="text-gray-600 hover:text-gray-900">View</button>
+                        <button
+                          onClick={() => alert(`Event Details:\nName: ${event.name}\nType: ${event.type}\nLocation: ${event.location}\nDate: ${event.startDateTime}\nCapacity: ${event.capacity}\nStatus: ${event.status}\nOrganizer: ${event.organizerName}`)}
+                          className="text-gray-600 hover:text-gray-900"
+                        >
+                          View
+                        </button>
                         <ActionButton
                           roles={['ADMIN', 'ORGANIZER']}
                           onClick={() => handleDeleteEvent(event.id, event.name)}

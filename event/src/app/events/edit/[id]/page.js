@@ -22,7 +22,7 @@ export default function EditEventPage() {
     location: '',
     capacity: '',
     price: '',
-    currency: 'USD',
+    currency: 'INR',
     category: '',
     tags: '',
     status: 'DRAFT'
@@ -108,6 +108,17 @@ export default function EditEventPage() {
     setSaving(true);
     setError('');
     setSuccess(false);
+
+    // Validate time: end time must be after start time
+    if (formData.startTime && formData.endTime) {
+      const startTime = new Date(`${formData.date}T${formData.startTime}`);
+      const endTime = new Date(`${formData.date}T${formData.endTime}`);
+      if (endTime <= startTime) {
+        setError('End time must be after start time');
+        setSaving(false);
+        return;
+      }
+    }
 
     try {
       // Format the data for the backend
@@ -386,15 +397,11 @@ export default function EditEventPage() {
               </label>
               <select
                 name="currency"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50"
                 value={formData.currency}
-                onChange={handleChange}
+                disabled
               >
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
-                <option value="GBP">GBP (£)</option>
-                <option value="CAD">CAD (C$)</option>
-                <option value="AUD">AUD (A$)</option>
+                <option value="INR">INR (₹)</option>
               </select>
             </div>
             <div>

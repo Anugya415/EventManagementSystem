@@ -1,2 +1,83 @@
--- Demo data removed for security purposes
--- Add your own data programmatically or through the API
+-- Sample data for Event Management System
+
+
+-- Insert Users (Indian names)
+INSERT INTO users (email, name, password, phone, role, created_at) VALUES
+('admin@eventman.com', 'Rajesh Kumar Sharma', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543210', 'ADMIN', '2024-09-01T10:00:00Z'),
+('organizer1@eventman.com', 'Priya Patel', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543211', 'ORGANIZER', '2024-09-02T10:00:00Z'),
+('organizer2@eventman.com', 'Amit Singh', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543212', 'ORGANIZER', '2024-09-03T10:00:00Z'),
+('organizer3@eventman.com', 'Sunita Reddy', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543213', 'ORGANIZER', '2024-09-04T10:00:00Z'),
+('attendee1@eventman.com', 'Vikram Joshi', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543214', 'ATTENDEE', '2024-09-05T10:00:00Z'),
+('attendee2@eventman.com', 'Kavita Gupta', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543215', 'ATTENDEE', '2024-09-06T10:00:00Z'),
+('attendee3@eventman.com', 'Rahul Verma', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543216', 'ATTENDEE', '2024-09-07T10:00:00Z'),
+('attendee4@eventman.com', 'Anjali Desai', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543217', 'ATTENDEE', '2024-09-08T10:00:00Z'),
+('attendee5@eventman.com', 'Suresh Kumar', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543218', 'ATTENDEE', '2024-09-09T10:00:00Z'),
+('attendee6@eventman.com', 'Meera Iyer', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543219', 'ATTENDEE', '2024-09-10T10:00:00Z'),
+('attendee7@eventman.com', 'Arjun Nair', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543220', 'ATTENDEE', '2024-09-11T10:00:00Z'),
+('attendee8@eventman.com', 'Poonam Agarwal', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543221', 'ATTENDEE', '2024-09-12T10:00:00Z'),
+('attendee9@eventman.com', 'Deepak Mishra', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543222', 'ATTENDEE', '2024-09-13T10:00:00Z'),
+('attendee10@eventman.com', 'Kiran Rao', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543223', 'ATTENDEE', '2024-09-14T10:00:00Z');
+
+-- Insert Events
+INSERT INTO events (name, description, location, start_date_time, end_date_time, capacity, price, currency, type, category, tags, status, organizer_id, organizer_name, created_at) VALUES
+('Diwali Festival Celebration', 'Grand Diwali festival celebration with traditional dances, music, and fireworks. Experience the festival of lights with authentic Indian cultural performances.', 'Jawaharlal Nehru Stadium, Delhi', '2024-11-12T18:00:00Z', '2024-11-12T23:00:00Z', 5000, 1500.00, 'INR', 'FESTIVAL', 'Cultural', 'diwali,festival,cultural,traditional,lights', 'ACTIVE', 2, 'Priya Patel', '2024-09-15T10:00:00Z'),
+('TechCrunch Mumbai 2024', 'Leading technology conference featuring AI, blockchain, and startup innovations. Network with industry leaders and discover cutting-edge technologies.', 'Bombay Exhibition Centre, Mumbai', '2024-10-25T09:00:00Z', '2024-10-25T18:00:00Z', 1200, 8500.00, 'INR', 'CONFERENCE', 'Technology', 'tech,ai,blockchain,startups,innovation', 'ACTIVE', 3, 'Amit Singh', '2024-09-16T10:00:00Z'),
+('Traditional South Indian Wedding', 'Elegant South Indian wedding ceremony featuring traditional rituals, classical music, and authentic cuisine. A celebration of love and culture.', 'Taj Mahal Palace, Mumbai', '2024-10-18T10:00:00Z', '2024-10-18T22:00:00Z', 300, 25000.00, 'INR', 'WEDDING', 'Wedding', 'wedding,south-indian,traditional,culture,ceremony', 'ACTIVE', 4, 'Sunita Reddy', '2024-09-17T10:00:00Z'),
+('Bollywood Dance Workshop', 'Learn authentic Bollywood dance moves from professional choreographers. Perfect for beginners and intermediate dancers.', 'Dance Academy, Bangalore', '2024-09-28T14:00:00Z', '2024-09-28T17:00:00Z', 50, 2500.00, 'INR', 'WORKSHOP', 'Dance', 'bollywood,dance,workshop,choreography,entertainment', 'ACTIVE', 2, 'Priya Patel', '2024-09-18T10:00:00Z'),
+('Guru Purnima Spiritual Retreat', 'Meditation and spiritual guidance session with renowned spiritual leaders. Find inner peace and enlightenment.', 'Ashram, Rishikesh', '2024-07-21T06:00:00Z', '2024-07-21T20:00:00Z', 200, 5000.00, 'INR', 'OTHER', 'Spiritual', 'meditation,spiritual,guru,purnima,retreat', 'COMPLETED', 4, 'Sunita Reddy', '2024-06-01T10:00:00Z'),
+('Startup Pitch Competition', 'Annual startup pitch competition featuring emerging entrepreneurs. Win prizes and connect with investors.', 'IIT Delhi Campus', '2024-12-05T10:00:00Z', '2024-12-05T16:00:00Z', 300, 1000.00, 'INR', 'CONFERENCE', 'Business', 'startup,pitch,competition,entrepreneurship,investment', 'DRAFT', 3, 'Amit Singh', '2024-09-19T10:00:00Z'),
+('Holi Color Festival 2024', 'Vibrant Holi celebration with colors, music, and traditional sweets. Experience the festival of colors in its true essence.', 'India Gate, Delhi', '2024-03-25T08:00:00Z', '2024-03-25T18:00:00Z', 2000, 800.00, 'INR', 'FESTIVAL', 'Cultural', 'holi,festival,colors,cultural,celebration', 'COMPLETED', 2, 'Priya Patel', '2024-02-01T10:00:00Z'),
+('Digital Marketing Masterclass', 'Comprehensive digital marketing workshop covering SEO, social media, and content marketing strategies.', 'Online Webinar', '2024-11-08T15:00:00Z', '2024-11-08T18:00:00Z', 500, 3500.00, 'INR', 'WEBINAR', 'Education', 'digital-marketing,seo,social-media,content,online', 'ACTIVE', 3, 'Amit Singh', '2024-09-20T10:00:00Z');
+
+-- Insert Tickets
+INSERT INTO tickets (name, description, price, currency, quantity_available, event_id, event_name, status, created_at) VALUES
+('VIP Pass - Diwali Festival', 'Premium seating with complimentary dinner and exclusive access to cultural performances', 3000.00, 'INR', 100, 1, 'Diwali Festival Celebration', 'ACTIVE', '2024-09-15T11:00:00Z'),
+('Standard Pass - Diwali Festival', 'General admission with access to all festival activities', 1500.00, 'INR', 200, 1, 'Diwali Festival Celebration', 'ACTIVE', '2024-09-15T11:00:00Z'),
+('Student Pass - Diwali Festival', 'Discounted entry for students with valid ID', 800.00, 'INR', 50, 1, 'Diwali Festival Celebration', 'ACTIVE', '2024-09-15T11:00:00Z'),
+('Premium Conference Pass', 'Full access to all sessions, networking lunch, and conference materials', 10000.00, 'INR', 150, 2, 'TechCrunch Mumbai 2024', 'ACTIVE', '2024-09-16T11:00:00Z'),
+('Regular Conference Pass', 'Access to all sessions and basic networking', 8500.00, 'INR', 200, 2, 'TechCrunch Mumbai 2024', 'ACTIVE', '2024-09-16T11:00:00Z'),
+('Workshop Only Pass', 'Access to workshops and startup sessions only', 4000.00, 'INR', 100, 2, 'TechCrunch Mumbai 2024', 'ACTIVE', '2024-09-16T11:00:00Z'),
+('Wedding Guest Pass', 'Complete wedding ceremony with reception and traditional feast', 30000.00, 'INR', 50, 3, 'Traditional South Indian Wedding', 'ACTIVE', '2024-09-17T11:00:00Z'),
+('Ceremony Only Pass', 'Wedding ceremony only without reception', 15000.00, 'INR', 30, 3, 'Traditional South Indian Wedding', 'ACTIVE', '2024-09-17T11:00:00Z'),
+('VIP Wedding Package', 'Premium wedding experience with special seating and photography', 50000.00, 'INR', 20, 3, 'Traditional South Indian Wedding', 'ACTIVE', '2024-09-17T11:00:00Z'),
+('Beginner Dance Workshop', '3-hour Bollywood dance workshop for beginners', 2500.00, 'INR', 25, 4, 'Bollywood Dance Workshop', 'ACTIVE', '2024-09-18T11:00:00Z'),
+('Intermediate Dance Workshop', 'Advanced Bollywood dance moves and choreography', 3500.00, 'INR', 25, 4, 'Bollywood Dance Workshop', 'ACTIVE', '2024-09-18T11:00:00Z'),
+('Retreat Package', 'Complete spiritual retreat with accommodation and meals', 8000.00, 'INR', 30, 5, 'Guru Purnima Spiritual Retreat', 'ACTIVE', '2024-06-01T11:00:00Z'),
+('Day Pass Retreat', 'Single day access to meditation and spiritual sessions', 2000.00, 'INR', 50, 5, 'Guru Purnima Spiritual Retreat', 'ACTIVE', '2024-06-01T11:00:00Z'),
+('Pitch Competition Entry', 'Entry to startup pitch competition with judging opportunity', 2000.00, 'INR', 50, 6, 'Startup Pitch Competition', 'ACTIVE', '2024-09-19T11:00:00Z'),
+('Audience Pass', 'Spectator access to all pitches and networking events', 500.00, 'INR', 100, 6, 'Startup Pitch Competition', 'ACTIVE', '2024-09-19T11:00:00Z'),
+('Holi Color Festival Pass', 'Full day access to Holi celebration with colors and music', 800.00, 'INR', 100, 7, 'Holi Color Festival 2024', 'ACTIVE', '2024-02-01T11:00:00Z'),
+('Family Pass Holi', 'Family package for 4 people with special activities', 2500.00, 'INR', 50, 7, 'Holi Color Festival 2024', 'ACTIVE', '2024-02-01T11:00:00Z'),
+('Webinar Access', 'Complete access to digital marketing masterclass with recordings', 3500.00, 'INR', 100, 8, 'Digital Marketing Masterclass', 'ACTIVE', '2024-09-20T11:00:00Z'),
+('Workshop Package', 'Interactive workshop with live Q&A and certification', 5000.00, 'INR', 50, 8, 'Digital Marketing Masterclass', 'ACTIVE', '2024-09-20T11:00:00Z');
+
+-- Insert Payments
+INSERT INTO payments (amount, currency, status, payment_method, transaction_id, user_id, user_email, event_id, event_name, ticket_id, ticket_name, quantity, notes, created_at, updated_at) VALUES
+(3000.00, 'INR', 'COMPLETED', 'CREDIT_CARD', 'TXN_DWF_001', 5, 'attendee1@eventman.com', 1, 'Diwali Festival Celebration', 1, 'VIP Pass - Diwali Festival', 2, 'VIP tickets for Diwali festival with family', '2024-09-16T14:30:00Z', '2024-09-16T14:35:00Z'),
+(8500.00, 'INR', 'COMPLETED', 'DEBIT_CARD', 'TXN_TCM_002', 6, 'attendee2@eventman.com', 2, 'TechCrunch Mumbai 2024', 5, 'Regular Conference Pass', 1, 'Tech conference registration', '2024-09-17T10:15:00Z', '2024-09-17T10:20:00Z'),
+(25000.00, 'INR', 'COMPLETED', 'BANK_TRANSFER', 'TXN_WED_003', 7, 'attendee3@eventman.com', 3, 'Traditional South Indian Wedding', 7, 'Wedding Guest Pass', 1, 'Wedding invitation for family of 4', '2024-09-18T16:45:00Z', '2024-09-18T16:50:00Z'),
+(2500.00, 'INR', 'COMPLETED', 'PAYPAL', 'TXN_DWK_004', 8, 'attendee4@eventman.com', 4, 'Bollywood Dance Workshop', 10, 'Beginner Dance Workshop', 1, 'Bollywood dance workshop for beginners', '2024-09-19T11:20:00Z', '2024-09-19T11:25:00Z'),
+(8000.00, 'INR', 'COMPLETED', 'CREDIT_CARD', 'TXN_SPR_005', 9, 'attendee5@eventman.com', 5, 'Guru Purnima Spiritual Retreat', 12, 'Retreat Package', 1, 'Spiritual retreat package with accommodation', '2024-06-15T09:30:00Z', '2024-06-15T09:35:00Z'),
+(1000.00, 'INR', 'COMPLETED', 'CASH', 'TXN_SPC_006', 10, 'attendee6@eventman.com', 6, 'Startup Pitch Competition', 15, 'Audience Pass', 1, 'Spectator ticket for startup competition', '2024-09-20T13:10:00Z', '2024-09-20T13:15:00Z'),
+(3200.00, 'INR', 'COMPLETED', 'CREDIT_CARD', 'TXN_HCF_007', 11, 'attendee7@eventman.com', 7, 'Holi Color Festival 2024', 16, 'Holi Color Festival Pass', 4, 'Family pass for Holi celebration', '2024-03-20T12:00:00Z', '2024-03-20T12:05:00Z'),
+(3500.00, 'INR', 'COMPLETED', 'DEBIT_CARD', 'TXN_DMM_008', 12, 'attendee8@eventman.com', 8, 'Digital Marketing Masterclass', 18, 'Webinar Access', 1, 'Digital marketing webinar access', '2024-09-21T15:45:00Z', '2024-09-21T15:50:00Z'),
+(1500.00, 'INR', 'PENDING', 'CREDIT_CARD', 'TXN_DWF_009', 13, 'attendee9@eventman.com', 1, 'Diwali Festival Celebration', 2, 'Standard Pass - Diwali Festival', 1, 'Standard ticket for Diwali festival', '2024-09-22T10:30:00Z', '2024-09-22T10:30:00Z'),
+(5000.00, 'INR', 'FAILED', 'PAYPAL', 'TXN_DMM_010', 14, 'attendee10@eventman.com', 8, 'Digital Marketing Masterclass', 19, 'Workshop Package', 1, 'Failed payment - insufficient funds', '2024-09-22T14:20:00Z', '2024-09-22T14:25:00Z'),
+(8500.00, 'INR', 'COMPLETED', 'BANK_TRANSFER', 'TXN_TCM_011', 5, 'attendee1@eventman.com', 2, 'TechCrunch Mumbai 2024', 5, 'Regular Conference Pass', 1, 'Conference registration for colleague', '2024-09-17T15:30:00Z', '2024-09-17T15:35:00Z'),
+(2000.00, 'INR', 'COMPLETED', 'CASH', 'TXN_SPR_012', 6, 'attendee2@eventman.com', 5, 'Guru Purnima Spiritual Retreat', 13, 'Day Pass Retreat', 1, 'Day pass for spiritual retreat', '2024-07-15T08:45:00Z', '2024-07-15T08:50:00Z'),
+(800.00, 'INR', 'COMPLETED', 'CREDIT_CARD', 'TXN_HCF_013', 7, 'attendee3@eventman.com', 7, 'Holi Color Festival 2024', 16, 'Holi Color Festival Pass', 1, 'Individual ticket for Holi festival', '2024-03-15T11:15:00Z', '2024-03-15T11:20:00Z');
+
+-- Insert Reminders
+INSERT INTO reminders (title, message, type, status, user_id, user_email, event_id, event_name, scheduled_time, sent_time, notes, created_at) VALUES
+('Diwali Festival Reminder', 'Your VIP tickets for Diwali Festival Celebration are confirmed. Event starts tomorrow at Jawaharlal Nehru Stadium, Delhi.', 'EMAIL', 'SENT', 5, 'attendee1@eventman.com', 1, 'Diwali Festival Celebration', '2024-11-11T10:00:00Z', '2024-11-11T10:05:00Z', '24 hours before event reminder', '2024-09-16T15:00:00Z'),
+('Tech Conference Registration', 'Thank you for registering for TechCrunch Mumbai 2024. Your conference pass is ready. Don\'t forget to bring your ID.', 'EMAIL', 'SENT', 6, 'attendee2@eventman.com', 2, 'TechCrunch Mumbai 2024', '2024-10-24T09:00:00Z', '2024-10-24T09:05:00Z', 'Day before event reminder', '2024-09-17T11:00:00Z'),
+('Wedding Ceremony Notification', 'Your wedding invitation for Traditional South Indian Wedding is confirmed. Ceremony begins at 10 AM.', 'SMS', 'SENT', 7, 'attendee3@eventman.com', 3, 'Traditional South Indian Wedding', '2024-10-17T08:00:00Z', '2024-10-17T08:02:00Z', '2 hours before event SMS reminder', '2024-09-18T17:00:00Z'),
+('Dance Workshop Reminder', 'Bollywood Dance Workshop starts tomorrow! Bring comfortable clothes and water bottle.', 'PUSH_NOTIFICATION', 'SENT', 8, 'attendee4@eventman.com', 4, 'Bollywood Dance Workshop', '2024-09-27T12:00:00Z', '2024-09-27T12:01:00Z', 'Mobile push notification reminder', '2024-09-19T12:00:00Z'),
+('Spiritual Retreat Confirmation', 'Your Guru Purnima Spiritual Retreat package is confirmed. Retreat begins at sunrise. Please arrive by 5:30 AM.', 'EMAIL', 'SENT', 9, 'attendee5@eventman.com', 5, 'Guru Purnima Spiritual Retreat', '2024-07-20T18:00:00Z', '2024-07-20T18:05:00Z', 'Evening before retreat reminder', '2024-06-15T10:00:00Z'),
+('Startup Competition Alert', 'Startup Pitch Competition starts tomorrow at IIT Delhi. Your audience pass is ready.', 'EMAIL', 'SENT', 10, 'attendee6@eventman.com', 6, 'Startup Pitch Competition', '2024-12-04T10:00:00Z', '2024-12-04T10:05:00Z', 'Day before competition reminder', '2024-09-20T14:00:00Z'),
+('Holi Festival Reminder', 'Holi Color Festival 2024 starts tomorrow! Don\'t forget to wear old clothes and bring water.', 'SMS', 'SENT', 11, 'attendee7@eventman.com', 7, 'Holi Color Festival 2024', '2024-03-24T08:00:00Z', '2024-03-24T08:02:00Z', 'Morning of event SMS reminder', '2024-03-20T13:00:00Z'),
+('Digital Marketing Webinar', 'Digital Marketing Masterclass starts in 2 hours. Make sure you have stable internet connection.', 'PUSH_NOTIFICATION', 'PENDING', 12, 'attendee8@eventman.com', 8, 'Digital Marketing Masterclass', '2024-11-08T13:00:00Z', NULL, '2 hours before webinar push notification', '2024-09-21T16:00:00Z'),
+('Payment Pending Reminder', 'Your payment for Diwali Festival ticket is still pending. Please complete payment to secure your booking.', 'EMAIL', 'SENT', 13, 'attendee9@eventman.com', 1, 'Diwali Festival Celebration', '2024-09-23T10:00:00Z', '2024-09-23T10:05:00Z', 'Payment reminder for pending transaction', '2024-09-22T11:00:00Z'),
+('Failed Payment Notification', 'Your payment for Digital Marketing Masterclass failed due to insufficient funds. Please try again with a different payment method.', 'EMAIL', 'SENT', 14, 'attendee10@eventman.com', 8, 'Digital Marketing Masterclass', '2024-09-22T16:00:00Z', '2024-09-22T16:05:00Z', 'Failed payment notification', '2024-09-22T15:00:00Z'),
+('Event Follow-up', 'Thank you for attending TechCrunch Mumbai 2024! We hope you enjoyed the conference. Share your feedback with us.', 'EMAIL', 'PENDING', 6, 'attendee2@eventman.com', 2, 'TechCrunch Mumbai 2024', '2024-10-26T10:00:00Z', NULL, 'Post-event feedback request', '2024-10-25T18:00:00Z'),
+('Upcoming Event Suggestion', 'Based on your interest in Bollywood Dance, you might enjoy our upcoming Kathakali performance next month.', 'EMAIL', 'PENDING', 8, 'attendee4@eventman.com', NULL, NULL, '2024-10-01T12:00:00Z', NULL, 'Personalized event recommendation', '2024-09-19T12:30:00Z');

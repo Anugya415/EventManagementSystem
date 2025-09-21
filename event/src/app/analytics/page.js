@@ -9,13 +9,13 @@ export default function AnalyticsPage() {
     overview: {
       totalEvents: 12,
       totalAttendees: 2847,
-      totalRevenue: '$186,500',
+      totalRevenue: '₹14,92,000',
       averageRating: 4.6,
     },
     performance: [
-      { event: 'Tech Conference 2024', attendees: 500, revenue: '$74,500', rating: 4.8 },
-      { event: 'Wedding Ceremony', attendees: 120, revenue: '$18,000', rating: 4.9 },
-      { event: 'Music Festival', attendees: 1000, revenue: '$94,000', rating: 4.5 },
+      { event: 'Tech Conference 2024', attendees: 500, revenue: '₹5,96,000', rating: 4.8 },
+      { event: 'Wedding Ceremony', attendees: 120, revenue: '₹1,44,000', rating: 4.9 },
+      { event: 'Music Festival', attendees: 1000, revenue: '₹7,52,000', rating: 4.5 },
     ],
     trends: {
       registrations: [120, 150, 180, 200, 250, 300, 350],
@@ -219,7 +219,7 @@ export default function AnalyticsPage() {
               <div className="text-blue-500 text-xl">💰</div>
               <div>
                 <h4 className="font-medium text-gray-900">Revenue Milestone</h4>
-                <p className="text-sm text-gray-600">Total revenue has exceeded $180K for the first time.</p>
+                <p className="text-sm text-gray-600">Total revenue has exceeded ₹1.44Cr for the first time.</p>
               </div>
             </div>
           </div>

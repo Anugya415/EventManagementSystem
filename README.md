@@ -1,4 +1,4 @@
-# EventMan - Event Management System
+# Festify - Event Management System
 
 A comprehensive event management system with role-based access control, built with Next.js frontend and Spring Boot backend.
 

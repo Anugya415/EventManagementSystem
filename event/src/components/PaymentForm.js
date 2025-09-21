@@ -31,7 +31,7 @@ export default function PaymentForm({ userId, eventId, ticketId, amount, onSucce
       const token = localStorage.getItem('token');
       const paymentData = {
         amount: amount,
-        currency: 'USD',
+        currency: 'INR',
         paymentMethod: paymentMethod,
         userId: userId,
         eventId: eventId,
@@ -260,7 +260,7 @@ export default function PaymentForm({ userId, eventId, ticketId, amount, onSucce
           <div className="bg-gray-50 p-4 rounded-md">
             <div className="flex justify-between items-center">
               <span className="text-sm font-medium text-gray-700">Total Amount:</span>
-              <span className="text-lg font-bold text-gray-900">${amount?.toFixed(2)}</span>
+              <span className="text-lg font-bold text-gray-900">₹{amount?.toFixed(2)}</span>
             </div>
           </div>
 
@@ -285,7 +285,7 @@ export default function PaymentForm({ userId, eventId, ticketId, amount, onSucce
                   Processing...
                 </>
               ) : (
-                <>Pay ${amount?.toFixed(2)}</>
+                <>Pay ₹{amount?.toFixed(2)}</>
               )}
             </button>
           </div>

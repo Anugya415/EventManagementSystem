@@ -39,7 +39,7 @@ export default function LoginPage() {
           <div className="text-4xl">🎪</div>
         </div>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Sign in to EventMan
+          Sign in to Festify
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
           Welcome back! Please sign in to your account.
@@ -136,7 +136,7 @@ export default function LoginPage() {
 
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
-                Don't have an account?{' '}
+                Don&apos;t have an account?{' '}
                 <Link
                   href="/register"
                   className="font-medium text-blue-600 hover:text-blue-500"

@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useNotification } from './NotificationContext';
 
 export default function UserForm({ userId = null, onSuccess }) {
   const router = useRouter();
+  const { showNotification } = useNotification();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
@@ -79,6 +81,7 @@ export default function UserForm({ userId = null, onSuccess }) {
       });
 
       if (response.ok) {
+        showNotification(`User ${userId ? 'updated' : 'created'} successfully!`, 'success');
         if (onSuccess) {
           onSuccess();
         } else {

@@ -131,7 +131,7 @@ public class AuthController {
             String token = jwtUtil.generateToken(email, roles);
 
             Map<String, Object> response = new HashMap<>();
-            response.put("message", "Registration successful! Welcome to EventMan!");
+            response.put("message", "Registration successful! Welcome to Festify!");
             response.put("token", token);
             response.put("user", Map.of(
                 "id", userId,

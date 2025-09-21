@@ -10,7 +10,7 @@ export default function RecentActivity() {
     {
       id: 2,
       type: 'payment',
-      message: 'Payment received: $299 for Wedding Ceremony',
+      message: 'Payment received: ₹2,390 for Traditional South Indian Wedding',
       time: '5 minutes ago',
       icon: '💳',
     },

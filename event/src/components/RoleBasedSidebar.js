@@ -64,7 +64,7 @@ export default function RoleBasedSidebar() {
   return (
     <div className="bg-gray-900 text-white w-64 min-h-screen p-4">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-blue-400">EventMan</h1>
+        <h1 className="text-2xl font-bold text-blue-400">Festify</h1>
         <p className="text-sm text-gray-400 mt-1">Event Management System</p>
       </div>
 

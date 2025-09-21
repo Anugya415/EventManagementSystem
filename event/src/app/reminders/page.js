@@ -284,7 +284,12 @@ export default function RemindersPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button className="text-blue-600 hover:text-blue-900">View Report</button>
+                        <button
+                          onClick={() => alert(`Reminder Report:\nTitle: ${reminder.title}\nRecipients: ${reminder.recipients}\nOpened: ${reminder.opened} (${Math.round((reminder.opened/reminder.recipients)*100)}%)\nClicked: ${reminder.clicked} (${Math.round((reminder.clicked/reminder.recipients)*100)}%)\nStatus: ${reminder.status}\nScheduled: ${reminder.scheduledTime}`)}
+                          className="text-blue-600 hover:text-blue-900"
+                        >
+                          View Report
+                        </button>
                       </td>
                     </tr>
                   ))}

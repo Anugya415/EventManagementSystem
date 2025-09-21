@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import DashboardLayout from "../components/DashboardLayout";
 import { AuthProvider } from "../components/AuthContext";
+import { NotificationProvider } from "../components/NotificationContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "EventMan - Event Management System",
+  title: "Festify - Event Management System",
   description: "Professional event management system for planning and organizing conferences, weddings, and workshops",
 };
 
@@ -25,9 +26,11 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          <DashboardLayout>
-            {children}
-          </DashboardLayout>
+          <NotificationProvider>
+            <DashboardLayout>
+              {children}
+            </DashboardLayout>
+          </NotificationProvider>
         </AuthProvider>
       </body>
     </html>

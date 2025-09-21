@@ -205,9 +205,24 @@ export default function AttendeesPage() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
-                      <button className="text-blue-600 hover:text-blue-900">View</button>
-                      <button className="text-gray-600 hover:text-gray-900">Edit</button>
-                      <button className="text-red-600 hover:text-red-900">Cancel</button>
+                      <button
+                        onClick={() => alert(`Attendee Details:\nName: ${attendee.name}\nEmail: ${attendee.email}\nEvent: ${attendee.event}\nTicket: ${attendee.ticketType}\nStatus: ${attendee.status}\nPayment: ${attendee.paymentStatus}\nRegistered: ${attendee.registrationDate}`)}
+                        className="text-blue-600 hover:text-blue-900"
+                      >
+                        View
+                      </button>
+                      <button
+                        onClick={() => alert('Edit functionality for attendee ' + attendee.name)}
+                        className="text-gray-600 hover:text-gray-900"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => alert('Registration cancelled for attendee ' + attendee.name)}
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        Cancel
+                      </button>
                     </div>
                   </td>
                 </tr>

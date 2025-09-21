@@ -17,11 +17,11 @@ export default function Dashboard() {
           <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
           <RoleBasedContent
             content={{
-              ADMIN: <p className="text-gray-600 mt-1">Welcome back, Administrator! Here's what's happening with all events.</p>,
-              ORGANIZER: <p className="text-gray-600 mt-1">Welcome back, Organizer! Here's what's happening with your events.</p>,
-              ATTENDEE: <p className="text-gray-600 mt-1">Welcome back! Here's your event dashboard.</p>,
+              ADMIN: <p className="text-gray-600 mt-1">Welcome back, Administrator! Here&apos;s what&apos;s happening with all events.</p>,
+              ORGANIZER: <p className="text-gray-600 mt-1">Welcome back, Organizer! Here&apos;s what&apos;s happening with your events.</p>,
+              ATTENDEE: <p className="text-gray-600 mt-1">Welcome back! Here&apos;s your event dashboard.</p>,
             }}
-            defaultContent={<p className="text-gray-600 mt-1">Welcome back! Here's what's happening with your events.</p>}
+            defaultContent={<p className="text-gray-600 mt-1">Welcome back! Here&apos;s what&apos;s happening with your events.</p>}
           />
         </div>
         <PermissionGuard
@@ -56,7 +56,7 @@ export default function Dashboard() {
         <PermissionGuard roles={['ADMIN', 'ORGANIZER']}>
           <StatCard
             title="Revenue"
-            value="$45,231"
+            value="₹2,45,231"
             change="+12.5%"
             icon="💰"
             color="yellow"

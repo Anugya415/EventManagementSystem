@@ -107,7 +107,7 @@ export default function RegisterPage() {
                 Registration Successful!
               </h2>
               <p className="mt-2 text-center text-sm text-gray-600">
-                Welcome to EventMan! You are being redirected to your dashboard...
+                Welcome to Festify! You are being redirected to your dashboard...
               </p>
             </div>
           </div>
@@ -126,7 +126,7 @@ export default function RegisterPage() {
             </svg>
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Join EventMan
+            Join Festify
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Create your account to start exploring events
@@ -270,7 +270,7 @@ export default function RegisterPage() {
             <div className="mt-6 p-4 bg-green-50 rounded-md">
               <h3 className="text-sm font-medium text-green-800 mb-2">💡 Tip:</h3>
               <p className="text-xs text-green-700">
-                New users are automatically assigned the "Attendee" role. You can explore events, purchase tickets, and manage your profile. For organizer or admin access, contact your system administrator.
+                New users are automatically assigned the &quot;Attendee&quot; role. You can explore events, purchase tickets, and manage your profile. For organizer or admin access, contact your system administrator.
               </p>
             </div>
           </div>

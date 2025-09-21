@@ -3,11 +3,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../components/AuthContext';
+import { useNotification } from '../../components/NotificationContext';
 import UserForm from '../../components/UserForm';
 
 export default function UsersPage() {
   const router = useRouter();
   const { hasRole } = useAuth();
+  const { showNotification } = useNotification();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('all');
   const [users, setUsers] = useState([]);
@@ -15,17 +17,6 @@ export default function UsersPage() {
   const [error, setError] = useState('');
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
-
-  // Redirect if not admin
-  if (!hasRole('ADMIN')) {
-    return (
-      <div className="text-center py-12">
-        <div className="text-6xl mb-4">🚫</div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
-        <p className="text-gray-600">You don't have permission to access this page.</p>
-      </div>
-    );
-  }
 
   // Fetch users from backend
   useEffect(() => {
@@ -54,6 +45,17 @@ export default function UsersPage() {
     fetchUsers();
   }, []);
 
+  // Redirect if not admin
+  if (!hasRole('ADMIN')) {
+    return (
+      <div className="text-center py-12">
+        <div className="text-6xl mb-4">🚫</div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
+        <p className="text-gray-600">You don&apos;t have permission to access this page.</p>
+      </div>
+    );
+  }
+
   // Delete user function
   const handleDeleteUser = async (userId, userName) => {
     if (!window.confirm(`Are you sure you want to delete "${userName}"? This action cannot be undone.`)) {
@@ -72,13 +74,13 @@ export default function UsersPage() {
       if (response.ok) {
         // Remove user from local state
         setUsers(prevUsers => prevUsers.filter(user => user.id !== userId));
-        alert('User deleted successfully!');
+        showNotification('User deleted successfully!', 'success');
       } else {
         const errorData = await response.json();
-        alert(`Failed to delete user: ${errorData.message || 'Unknown error'}`);
+        showNotification(`Failed to delete user: ${errorData.message || 'Unknown error'}`, 'error');
       }
     } catch (err) {
-      alert('Network error. Please check if the backend server is running.');
+      showNotification('Network error. Please check if the backend server is running.', 'error');
     }
   };
 
@@ -273,7 +275,12 @@ export default function UsersPage() {
                       >
                         Edit
                       </button>
-                      <button className="text-gray-600 hover:text-gray-900">View</button>
+                      <button
+                        onClick={() => alert(`User Details:\nName: ${user.name}\nEmail: ${user.email}\nRole: ${user.role}\nPhone: ${user.phone || 'N/A'}\nCreated: ${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}`)}
+                        className="text-gray-600 hover:text-gray-900"
+                      >
+                        View
+                      </button>
                       <button
                         onClick={() => handleDeleteUser(user.id, user.name)}
                         className="text-red-600 hover:text-red-900"

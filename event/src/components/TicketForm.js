@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useNotification } from './NotificationContext';
 
 export default function TicketForm({ ticketId = null, eventId = null, onSuccess }) {
   const router = useRouter();
+  const { showNotification } = useNotification();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [events, setEvents] = useState([]);
@@ -12,7 +14,7 @@ export default function TicketForm({ ticketId = null, eventId = null, onSuccess 
     name: '',
     description: '',
     price: '',
-    currency: 'USD',
+    currency: 'INR',
     quantityAvailable: '',
     eventId: eventId || '',
     status: 'ACTIVE'
@@ -59,7 +61,7 @@ export default function TicketForm({ ticketId = null, eventId = null, onSuccess 
               name: ticketData.name || '',
               description: ticketData.description || '',
               price: ticketData.price || '',
-              currency: ticketData.currency || 'USD',
+              currency: ticketData.currency || 'INR',
               quantityAvailable: ticketData.quantityAvailable || '',
               eventId: ticketData.eventId || '',
               status: ticketData.status || 'ACTIVE'
@@ -111,6 +113,7 @@ export default function TicketForm({ ticketId = null, eventId = null, onSuccess 
       });
 
       if (response.ok) {
+        showNotification(`Ticket ${ticketId ? 'updated' : 'created'} successfully!`, 'success');
         if (onSuccess) {
           onSuccess();
         } else {
@@ -226,14 +229,10 @@ export default function TicketForm({ ticketId = null, eventId = null, onSuccess 
                 name="currency"
                 required
                 value={formData.currency}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                disabled
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50"
               >
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
-                <option value="GBP">GBP (£)</option>
-                <option value="CAD">CAD (C$)</option>
-                <option value="AUD">AUD (A$)</option>
+                <option value="INR">INR (₹)</option>
               </select>
             </div>
 
