@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { api } from '../lib/api';
 
 export default function PaymentForm({ userId, eventId, ticketId, amount, onSuccess, onCancel }) {
   const [loading, setLoading] = useState(false);
@@ -28,7 +29,6 @@ export default function PaymentForm({ userId, eventId, ticketId, amount, onSucce
     setError('');
 
     try {
-      const token = localStorage.getItem('token');
       const paymentData = {
         amount: amount,
         currency: 'INR',
@@ -42,14 +42,7 @@ export default function PaymentForm({ userId, eventId, ticketId, amount, onSucce
       };
 
       // First create the payment record
-      const createResponse = await fetch('http://localhost:8080/api/payments', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token ? `Bearer ${token}` : '',
-        },
-        body: JSON.stringify(paymentData),
-      });
+      const createResponse = await api.payments.create(paymentData);
 
       if (!createResponse.ok) {
         const errorData = await createResponse.json();
@@ -62,14 +55,7 @@ export default function PaymentForm({ userId, eventId, ticketId, amount, onSucce
       await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate processing time
 
       // Update payment status to COMPLETED
-      const updateResponse = await fetch(`http://localhost:8080/api/payments/${payment.id}/status`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token ? `Bearer ${token}` : '',
-        },
-        body: JSON.stringify({ status: 'COMPLETED' }),
-      });
+      const updateResponse = await api.payments.update(payment.id, { status: 'COMPLETED' });
 
       if (updateResponse.ok) {
         if (onSuccess) {

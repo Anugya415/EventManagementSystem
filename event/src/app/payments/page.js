@@ -1,69 +1,97 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../components/AuthContext';
+import { useNotification } from '../../components/NotificationContext';
+import Link from 'next/link';
+import { api } from '../../lib/api';
 
 export default function PaymentsPage() {
   const [filterStatus, setFilterStatus] = useState('all');
+  const [payments, setPayments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const { user, isAuthenticated, hasRole } = useAuth();
+  const { showNotification } = useNotification();
 
-  const transactions = [
-    {
-      id: 'TXN001',
-      attendee: 'John Smith',
-      event: 'Tech Conference 2024',
-      amount: '₹2,390',
-      status: 'completed',
-      method: 'Credit Card',
-      date: '2024-09-10',
-      ticketType: 'VIP',
-    },
-    {
-      id: 'TXN002',
-      attendee: 'Sarah Johnson',
-      event: 'Tech Conference 2024',
-      amount: '₹1,192',
-      status: 'completed',
-      method: 'PayPal',
-      date: '2024-09-09',
-      ticketType: 'Regular',
-    },
-    {
-      id: 'TXN003',
-      attendee: 'Mike Davis',
-      event: 'Wedding Ceremony',
-      amount: '₹1,200',
-      status: 'pending',
-      method: 'Credit Card',
-      date: '2024-09-08',
-      ticketType: 'Adult',
-    },
-    {
-      id: 'TXN004',
-      attendee: 'Emily Chen',
-      event: 'Music Festival',
-      amount: '₹640',
-      status: 'completed',
-      method: 'Credit Card',
-      date: '2024-09-07',
-      ticketType: 'General',
-    },
-    {
-      id: 'TXN005',
-      attendee: 'David Wilson',
-      event: 'Tech Conference 2024',
-      amount: '₹1,192',
-      status: 'refunded',
-      method: 'Credit Card',
-      date: '2024-09-06',
-      ticketType: 'Regular',
-    },
-  ];
+  // Fetch payments from backend
+  useEffect(() => {
+    const fetchPayments = async () => {
+      try {
+        const response = await api.payments.getAll();
 
-  const filteredTransactions = transactions.filter((transaction) => {
-    return filterStatus === 'all' || transaction.status === filterStatus;
+        if (response.ok) {
+          const paymentsData = await response.json();
+          // Filter payments based on user role
+          if (hasRole('ADMIN') || hasRole('ORGANIZER')) {
+            // Admins and Organizers see all payments
+            setPayments(paymentsData);
+          } else {
+            // Attendees see only their payments
+            setPayments(paymentsData.filter(payment => payment.userEmail === user?.email));
+          }
+        } else {
+          setError('Failed to load payments');
+        }
+      } catch (err) {
+        setError('Network error. Please check if the backend server is running.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPayments();
+  }, [user, hasRole]);
+
+  // Check authentication
+  if (!isAuthenticated) {
+    return (
+      <div className="text-center py-12">
+        <div className="text-6xl mb-4">🔐</div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Authentication Required</h2>
+        <p className="text-gray-600 mb-6">You need to be logged in to view payments.</p>
+        <Link
+          href="/login"
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium"
+        >
+          Go to Login
+        </Link>
+      </div>
+    );
+  }
+
+  // Filter payments based on status
+  const filteredTransactions = payments.filter((payment) => {
+    return filterStatus === 'all' || payment.status?.toLowerCase() === filterStatus;
   });
 
+  // Calculate stats from real data
+  const stats = {
+    totalRevenue: payments.reduce((sum, payment) => sum + (payment.amount || 0), 0),
+    completedPayments: payments.filter(p => p.status === 'COMPLETED').length,
+    pendingPayments: payments.filter(p => p.status === 'PENDING').length,
+    refunds: payments.filter(p => p.status === 'REFUNDED').reduce((sum, p) => sum + (p.amount || 0), 0),
+  };
+
+  // Calculate payment methods breakdown
+  const paymentMethodsMap = payments.reduce((acc, payment) => {
+    const method = payment.paymentMethod || 'Unknown';
+    if (!acc[method]) {
+      acc[method] = 0;
+    }
+    acc[method]++;
+    return acc;
+  }, {});
+
+  const totalPayments = payments.length;
+  const paymentMethods = Object.entries(paymentMethodsMap).map(([method, count]) => ({
+    name: method.replace('_', ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase()),
+    count,
+    percentage: totalPayments > 0 ? Math.round((count / totalPayments) * 100) : 0
+  }));
+
   const getStatusColor = (status) => {
-    switch (status) {
+    switch (status?.toLowerCase()) {
       case 'completed':
         return 'bg-green-100 text-green-800';
       case 'pending':
@@ -72,16 +100,30 @@ export default function PaymentsPage() {
         return 'bg-red-100 text-red-800';
       case 'refunded':
         return 'bg-gray-100 text-gray-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const paymentMethods = [
-    { name: 'Credit Card', count: 145, percentage: 65 },
-    { name: 'PayPal', count: 52, percentage: 23 },
-    { name: 'Bank Transfer', count: 25, percentage: 12 },
-  ];
+  // Loading state
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Payments</h1>
+            <p className="text-gray-600 mt-1">Loading payments...</p>
+          </div>
+        </div>
+        <div className="bg-white p-8 rounded-lg shadow-sm border text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="text-gray-600 mt-4">Loading payments...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -89,39 +131,60 @@ export default function PaymentsPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Payments</h1>
-          <p className="text-gray-600 mt-1">Manage payments, transactions, and refunds.</p>
+          <p className="text-gray-600 mt-1">
+            {hasRole('ADMIN') || hasRole('ORGANIZER') 
+              ? 'Manage payments, transactions, and refunds.' 
+              : 'Your payment history and transactions.'}
+          </p>
         </div>
-        <div className="flex gap-2">
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium">
-            Process Payment
-          </button>
-          <button className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 font-medium">
-            Export Transactions
-          </button>
-        </div>
+        {(hasRole('ADMIN') || hasRole('ORGANIZER')) && (
+          <div className="flex gap-2">
+            <button 
+              onClick={() => alert('Payment processing feature would be implemented here')}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium"
+            >
+              Process Payment
+            </button>
+            <button 
+              onClick={() => alert('Export feature would be implemented here')}
+              className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 font-medium"
+            >
+              Export Transactions
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* Error display */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
+          ❌ {error}
+        </div>
+      )}
 
       {/* Payment Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <h3 className="text-sm font-medium text-gray-500">Total Revenue</h3>
-          <p className="text-3xl font-bold text-gray-900">₹14,92,000</p>
-          <p className="text-sm text-green-600 mt-1">+8% from last month</p>
+          <p className="text-3xl font-bold text-gray-900">₹{stats.totalRevenue.toFixed(2)}</p>
+          <p className="text-sm text-gray-600 mt-1">From {payments.length} transactions</p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <h3 className="text-sm font-medium text-gray-500">Completed Payments</h3>
-          <p className="text-3xl font-bold text-green-600">198</p>
-          <p className="text-sm text-gray-600 mt-1">95% success rate</p>
+          <p className="text-3xl font-bold text-green-600">{stats.completedPayments}</p>
+          <p className="text-sm text-gray-600 mt-1">
+            {payments.length > 0 ? Math.round((stats.completedPayments / payments.length) * 100) : 0}% success rate
+          </p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <h3 className="text-sm font-medium text-gray-500">Pending Payments</h3>
-          <p className="text-3xl font-bold text-yellow-600">12</p>
+          <p className="text-3xl font-bold text-yellow-600">{stats.pendingPayments}</p>
           <p className="text-sm text-gray-600 mt-1">Awaiting processing</p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <h3 className="text-sm font-medium text-gray-500">Refunds</h3>
-          <p className="text-3xl font-bold text-red-600">₹19,600</p>
-          <p className="text-sm text-gray-600 mt-1">This month</p>
+          <p className="text-3xl font-bold text-red-600">₹{stats.refunds.toFixed(2)}</p>
+          <p className="text-sm text-gray-600 mt-1">Total refunded</p>
         </div>
       </div>
 
@@ -166,6 +229,7 @@ export default function PaymentsPage() {
               <option value="pending">Pending</option>
               <option value="failed">Failed</option>
               <option value="refunded">Refunded</option>
+              <option value="cancelled">Cancelled</option>
             </select>
           </div>
         </div>
@@ -201,53 +265,55 @@ export default function PaymentsPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredTransactions.map((transaction) => (
-                <tr key={transaction.id} className="hover:bg-gray-50">
+              {filteredTransactions.map((payment) => (
+                <tr key={payment.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
-                      <div className="text-sm font-medium text-gray-900">{transaction.id}</div>
-                      <div className="text-sm text-gray-500">{new Date(transaction.date).toLocaleDateString()}</div>
+                      <div className="text-sm font-medium text-gray-900">{payment.transactionId}</div>
+                      <div className="text-sm text-gray-500">
+                        {payment.createdAt ? new Date(payment.createdAt).toLocaleDateString() : 'N/A'}
+                      </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {transaction.attendee}
+                    {payment.userEmail}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
-                      <div className="text-sm font-medium text-gray-900">{transaction.event}</div>
-                      <div className="text-sm text-gray-500">{transaction.ticketType}</div>
+                      <div className="text-sm font-medium text-gray-900">{payment.eventName}</div>
+                      <div className="text-sm text-gray-500">{payment.ticketName}</div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {transaction.amount}
+                    ₹{payment.amount?.toFixed(2) || '0.00'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(transaction.status)}`}>
-                      {transaction.status}
+                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(payment.status)}`}>
+                      {payment.status}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {transaction.method}
+                    {payment.paymentMethod?.replace('_', ' ') || 'N/A'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
                       <button
-                        onClick={() => alert(`Payment Details:\nID: ${transaction.id}\nAmount: ₹${transaction.amount}\nStatus: ${transaction.status}\nMethod: ${transaction.method}\nDate: ${transaction.date}\nAttendee: ${transaction.attendee}\nEvent: ${transaction.event}\nTicket: ${transaction.ticketType}`)}
+                        onClick={() => alert(`Payment Details:\nTransaction ID: ${payment.transactionId}\nAmount: ₹${payment.amount}\nStatus: ${payment.status}\nMethod: ${payment.paymentMethod}\nDate: ${payment.createdAt ? new Date(payment.createdAt).toLocaleDateString() : 'N/A'}\nUser: ${payment.userEmail}\nEvent: ${payment.eventName}\nTicket: ${payment.ticketName}\nQuantity: ${payment.quantity}\nNotes: ${payment.notes || 'None'}`)}
                         className="text-blue-600 hover:text-blue-900"
                       >
                         View
                       </button>
-                      {transaction.status === 'completed' && (
+                      {(hasRole('ADMIN') || hasRole('ORGANIZER')) && payment.status === 'COMPLETED' && (
                         <button
-                          onClick={() => alert('Refund initiated for transaction ' + transaction.id)}
+                          onClick={() => alert('Refund initiated for transaction ' + payment.transactionId)}
                           className="text-red-600 hover:text-red-900"
                         >
                           Refund
                         </button>
                       )}
-                      {transaction.status === 'pending' && (
+                      {(hasRole('ADMIN') || hasRole('ORGANIZER')) && payment.status === 'PENDING' && (
                         <button
-                          onClick={() => alert('Payment processed successfully for transaction ' + transaction.id)}
+                          onClick={() => alert('Payment processed successfully for transaction ' + payment.transactionId)}
                           className="text-green-600 hover:text-green-900"
                         >
                           Process
@@ -262,9 +328,15 @@ export default function PaymentsPage() {
         </div>
       </div>
 
-      {filteredTransactions.length === 0 && (
+      {filteredTransactions.length === 0 && !loading && (
         <div className="text-center py-12">
-          <p className="text-gray-500">No transactions found matching your criteria.</p>
+          <div className="text-6xl mb-4">💳</div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">No Payments Found</h3>
+          <p className="text-gray-600">
+            {filterStatus === 'all' 
+              ? 'No payment transactions found.' 
+              : `No ${filterStatus} transactions found.`}
+          </p>
         </div>
       )}
     </div>

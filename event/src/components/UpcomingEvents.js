@@ -2,10 +2,12 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { api } from '../lib/api';
 
 export default function UpcomingEvents() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [attendeeCounts, setAttendeeCounts] = useState({});
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -20,18 +22,38 @@ export default function UpcomingEvents() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/events');
-        if (response.ok) {
-          const eventsData = await response.json();
+        // Fetch both events and payments to get real attendee counts
+        const [eventsResponse, paymentsResponse] = await Promise.all([
+          api.events.getAll(),
+          api.payments.getAll()
+        ]);
+
+        if (eventsResponse.ok && paymentsResponse.ok) {
+          const eventsData = await eventsResponse.json();
+          const paymentsData = await paymentsResponse.json();
+
+          // Calculate real attendee counts per event
+          const attendeeCountsMap = {};
+          paymentsData.forEach(payment => {
+            if (payment.eventId) {
+              attendeeCountsMap[payment.eventId] = (attendeeCountsMap[payment.eventId] || 0) + 1;
+            }
+          });
+
           // Transform the data to match the expected format and limit to 4 events
-          const transformedEvents = eventsData.slice(0, 4).map(event => ({
-            id: event.id,
-            name: event.name,
-            date: event.startDateTime,
-            attendees: Math.floor(Math.random() * 100) + 10, // Mock attendee count
-            totalCapacity: event.capacity || 100
-          }));
+          const transformedEvents = eventsData
+            .filter(event => event.status === 'ACTIVE') // Only show active events
+            .slice(0, 4)
+            .map(event => ({
+              id: event.id,
+              name: event.name,
+              date: event.startDateTime,
+              attendees: attendeeCountsMap[event.id] || 0,
+              totalCapacity: event.capacity || 100
+            }));
+
           setEvents(transformedEvents);
+          setAttendeeCounts(attendeeCountsMap);
         }
       } catch (error) {
         console.error('Error fetching events:', error);

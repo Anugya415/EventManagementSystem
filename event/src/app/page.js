@@ -1,14 +1,70 @@
 'use client';
 
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import StatCard from '../components/StatCard';
 import RecentActivity from '../components/RecentActivity';
 import UpcomingEvents from '../components/UpcomingEvents';
 import PermissionGuard, { RoleBasedContent } from '../components/PermissionGuard';
 import { useAuth } from '../components/AuthContext';
+import { api } from '../lib/api';
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  const [stats, setStats] = useState({
+    totalEvents: 0,
+    totalCapacity: 0,
+    totalAttendees: 0,
+    totalRevenue: 0,
+    totalUsers: 0,
+    loading: true
+  });
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      if (!isAuthenticated) return;
+
+      try {
+        // Fetch all necessary data
+        const [eventsResponse, paymentsResponse, usersResponse, ticketsResponse] = await Promise.all([
+          api.events.getAll(),
+          api.payments.getAll(),
+          api.users.getAll(),
+          api.tickets.getAll()
+        ]);
+
+        if (eventsResponse.ok && paymentsResponse.ok && usersResponse.ok && ticketsResponse.ok) {
+          const events = await eventsResponse.json();
+          const payments = await paymentsResponse.json();
+          const users = await usersResponse.json();
+          const tickets = await ticketsResponse.json();
+
+          const totalEvents = events.length;
+          const totalCapacity = events.reduce((sum, event) => sum + (event.capacity || 0), 0);
+          const totalAttendees = payments.length;
+          const totalRevenue = payments
+            .filter(p => p.status === 'COMPLETED')
+            .reduce((sum, payment) => sum + payment.amount, 0);
+          const totalUsers = users.length;
+
+          setStats({
+            totalEvents,
+            totalCapacity,
+            totalAttendees,
+            totalRevenue,
+            totalUsers,
+            loading: false
+          });
+        }
+      } catch (error) {
+        console.error('Failed to fetch dashboard data:', error);
+        setStats(prev => ({ ...prev, loading: false }));
+      }
+    };
+
+    fetchDashboardData();
+  }, [isAuthenticated]);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -41,41 +97,43 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Total Events"
-          value="12"
-          change="+20.1%"
+          value={stats.loading ? "..." : stats.totalEvents.toLocaleString()}
+          change={stats.totalEvents > 0 ? "+20.1%" : "0%"}
           icon="🎪"
           color="blue"
         />
         <StatCard
-          title="Total Attendees"
-          value="2,847"
-          change="+15.3%"
-          icon="👥"
+          title="Total Capacity"
+          value={stats.loading ? "..." : stats.totalCapacity.toLocaleString()}
+          change={stats.totalCapacity > 0 ? "+15.3%" : "0%"}
+          icon="🏟️"
           color="green"
         />
         <PermissionGuard roles={['ADMIN', 'ORGANIZER']}>
           <StatCard
-            title="Revenue"
-            value="₹2,45,231"
-            change="+12.5%"
-            icon="💰"
-            color="yellow"
+            title="Total Attendees"
+            value={stats.loading ? "..." : stats.totalAttendees.toLocaleString()}
+            change={stats.totalAttendees > 0 && stats.totalCapacity > 0
+              ? `${((stats.totalAttendees / stats.totalCapacity) * 100).toFixed(1)}% of capacity`
+              : "0%"}
+            icon="👥"
+            color="green"
           />
         </PermissionGuard>
         <PermissionGuard roles={['ADMIN', 'ORGANIZER']}>
           <StatCard
-            title="Tickets Sold"
-            value="1,429"
-            change="+8.2%"
-            icon="🎫"
-            color="purple"
+            title="Revenue"
+            value={stats.loading ? "..." : `₹${stats.totalRevenue.toLocaleString()}`}
+            change={stats.totalRevenue > 0 ? "+12.5%" : "0%"}
+            icon="💰"
+            color="yellow"
           />
         </PermissionGuard>
         <PermissionGuard roles={['ADMIN']}>
           <StatCard
             title="System Users"
-            value="156"
-            change="+5.2%"
+            value={stats.loading ? "..." : stats.totalUsers.toLocaleString()}
+            change={stats.totalUsers > 0 ? "+5.2%" : "0%"}
             icon="👤"
             color="indigo"
           />

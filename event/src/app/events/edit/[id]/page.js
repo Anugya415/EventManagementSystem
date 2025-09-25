@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '../../../../components/AuthContext';
 import PermissionGuard, { usePermission } from '../../../../components/PermissionGuard';
+import { api } from '../../../../lib/api';
 
 export default function EditEventPage() {
   const params = useParams();
@@ -48,12 +49,7 @@ export default function EditEventPage() {
 
     const fetchEvent = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(`http://localhost:8080/api/events/${params.id}`, {
-          headers: {
-            'Authorization': token ? `Bearer ${token}` : '',
-          },
-        });
+        const response = await api.events.getById(params.id);
 
         if (response.ok) {
           const event = await response.json();
@@ -137,16 +133,7 @@ export default function EditEventPage() {
         status: formData.status.toUpperCase()
       };
 
-      const token = localStorage.getItem('token');
-
-      const response = await fetch(`http://localhost:8080/api/events/${params.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token ? `Bearer ${token}` : '',
-        },
-        body: JSON.stringify(eventData),
-      });
+      const response = await api.events.update(params.id, eventData);
 
       if (response.ok) {
         setSuccess(true);

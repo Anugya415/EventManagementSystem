@@ -1,22 +1,18 @@
 -- Sample data for Event Management System
 
 
--- Insert Users (Indian names)
+-- Insert Users (Indian names) with demo credentials
 INSERT INTO users (email, name, password, phone, role, created_at) VALUES
 ('admin@eventman.com', 'Rajesh Kumar Sharma', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543210', 'ADMIN', '2024-09-01T10:00:00Z'),
-('organizer1@eventman.com', 'Priya Patel', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543211', 'ORGANIZER', '2024-09-02T10:00:00Z'),
-('organizer2@eventman.com', 'Amit Singh', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543212', 'ORGANIZER', '2024-09-03T10:00:00Z'),
-('organizer3@eventman.com', 'Sunita Reddy', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543213', 'ORGANIZER', '2024-09-04T10:00:00Z'),
-('attendee1@eventman.com', 'Vikram Joshi', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543214', 'ATTENDEE', '2024-09-05T10:00:00Z'),
-('attendee2@eventman.com', 'Kavita Gupta', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543215', 'ATTENDEE', '2024-09-06T10:00:00Z'),
-('attendee3@eventman.com', 'Rahul Verma', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543216', 'ATTENDEE', '2024-09-07T10:00:00Z'),
-('attendee4@eventman.com', 'Anjali Desai', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543217', 'ATTENDEE', '2024-09-08T10:00:00Z'),
-('attendee5@eventman.com', 'Suresh Kumar', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543218', 'ATTENDEE', '2024-09-09T10:00:00Z'),
-('attendee6@eventman.com', 'Meera Iyer', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543219', 'ATTENDEE', '2024-09-10T10:00:00Z'),
-('attendee7@eventman.com', 'Arjun Nair', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543220', 'ATTENDEE', '2024-09-11T10:00:00Z'),
-('attendee8@eventman.com', 'Poonam Agarwal', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543221', 'ATTENDEE', '2024-09-12T10:00:00Z'),
-('attendee9@eventman.com', 'Deepak Mishra', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543222', 'ATTENDEE', '2024-09-13T10:00:00Z'),
-('attendee10@eventman.com', 'Kiran Rao', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543223', 'ATTENDEE', '2024-09-14T10:00:00Z');
+('superadmin@eventman.com', 'Super Admin', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543200', 'ADMIN', '2024-08-31T10:00:00Z'),
+('organizer@eventman.com', 'Priya Patel', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543211', 'ORGANIZER', '2024-09-02T10:00:00Z'),
+('sarah@eventman.com', 'Sarah Johnson', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543212', 'ORGANIZER', '2024-09-03T10:00:00Z'),
+('mike@eventman.com', 'Mike Chen', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543213', 'ORGANIZER', '2024-09-04T10:00:00Z'),
+('attendee@eventman.com', 'Vikram Joshi', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543214', 'ATTENDEE', '2024-09-05T10:00:00Z'),
+('john@example.com', 'John Smith', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543215', 'ATTENDEE', '2024-09-06T10:00:00Z'),
+('emma@example.com', 'Emma Wilson', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543216', 'ATTENDEE', '2024-09-07T10:00:00Z'),
+('alex@example.com', 'Alex Brown', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543217', 'ATTENDEE', '2024-09-08T10:00:00Z'),
+('lisa@example.com', 'Lisa Davis', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', '+91-9876543218', 'ATTENDEE', '2024-09-09T10:00:00Z');
 
 -- Insert Events
 INSERT INTO events (name, description, location, start_date_time, end_date_time, capacity, price, currency, type, category, tags, status, organizer_id, organizer_name, created_at) VALUES

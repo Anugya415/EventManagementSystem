@@ -5,10 +5,11 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '../../components/AuthContext';
 import { useNotification } from '../../components/NotificationContext';
 import UserForm from '../../components/UserForm';
+import { api } from '../../lib/api';
 
 export default function UsersPage() {
   const router = useRouter();
-  const { hasRole } = useAuth();
+  const { isAuthenticated, hasRole } = useAuth();
   const { showNotification } = useNotification();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('all');
@@ -22,12 +23,7 @@ export default function UsersPage() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:8080/api/users', {
-          headers: {
-            'Authorization': token ? `Bearer ${token}` : '',
-          },
-        });
+        const response = await api.users.getAll();
 
         if (response.ok) {
           const usersData = await response.json();
@@ -45,13 +41,30 @@ export default function UsersPage() {
     fetchUsers();
   }, []);
 
-  // Redirect if not admin
+  // Check authentication
+  if (!isAuthenticated) {
+    return (
+      <div className="text-center py-12">
+        <div className="text-6xl mb-4">🔐</div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Authentication Required</h2>
+        <p className="text-gray-600 mb-6">You need to be logged in to access user management.</p>
+        <button
+          onClick={() => router.push('/login')}
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium"
+        >
+          Go to Login
+        </button>
+      </div>
+    );
+  }
+
+  // Check permissions (Only Admins can manage users)
   if (!hasRole('ADMIN')) {
     return (
       <div className="text-center py-12">
         <div className="text-6xl mb-4">🚫</div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
-        <p className="text-gray-600">You don&apos;t have permission to access this page.</p>
+        <p className="text-gray-600">You don&apos;t have permission to manage users. Only administrators can access this page.</p>
       </div>
     );
   }
@@ -63,13 +76,7 @@ export default function UsersPage() {
     }
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': token ? `Bearer ${token}` : '',
-        },
-      });
+      const response = await api.users.delete(userId);
 
       if (response.ok) {
         // Remove user from local state

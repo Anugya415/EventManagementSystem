@@ -151,18 +151,19 @@ export default function LoginPage() {
           <div className="mt-6 p-4 bg-blue-50 rounded-md">
             <h3 className="text-sm font-medium text-blue-800 mb-2">Demo Credentials:</h3>
             <div className="text-xs text-blue-700 space-y-1">
-              <p><strong>Admin:</strong> admin@eventman.com / admin123</p>
-              <p><strong>Super Admin:</strong> superadmin@eventman.com / super123</p>
+              <p><strong>All demo accounts use password:</strong> password</p>
+              <p><strong>Admin:</strong> admin@eventman.com</p>
+              <p><strong>Super Admin:</strong> superadmin@eventman.com</p>
               <p><strong>Organizers:</strong></p>
-              <p className="ml-4">organizer@eventman.com / organizer123</p>
-              <p className="ml-4">sarah@eventman.com / sarah123</p>
-              <p className="ml-4">mike@eventman.com / mike123</p>
+              <p className="ml-4">organizer@eventman.com</p>
+              <p className="ml-4">sarah@eventman.com</p>
+              <p className="ml-4">mike@eventman.com</p>
               <p><strong>Attendees:</strong></p>
-              <p className="ml-4">attendee@eventman.com / attendee123</p>
-              <p className="ml-4">john@example.com / john123</p>
-              <p className="ml-4">emma@example.com / emma123</p>
-              <p className="ml-4">alex@example.com / alex123</p>
-              <p className="ml-4">lisa@example.com / lisa123</p>
+              <p className="ml-4">attendee@eventman.com</p>
+              <p className="ml-4">john@example.com</p>
+              <p className="ml-4">emma@example.com</p>
+              <p className="ml-4">alex@example.com</p>
+              <p className="ml-4">lisa@example.com</p>
             </div>
           </div>
         </div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { api } from '../lib/api';
 
 export default function ReminderForm({ reminderId = null, userId = null, eventId = null, onSuccess }) {
   const router = useRouter();
@@ -24,14 +25,8 @@ export default function ReminderForm({ reminderId = null, userId = null, eventId
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem('token');
-
         // Fetch users
-        const usersResponse = await fetch('http://localhost:8080/api/users', {
-          headers: {
-            'Authorization': token ? `Bearer ${token}` : '',
-          },
-        });
+        const usersResponse = await api.users.getAll();
 
         if (usersResponse.ok) {
           const usersData = await usersResponse.json();
@@ -39,11 +34,7 @@ export default function ReminderForm({ reminderId = null, userId = null, eventId
         }
 
         // Fetch events
-        const eventsResponse = await fetch('http://localhost:8080/api/events', {
-          headers: {
-            'Authorization': token ? `Bearer ${token}` : '',
-          },
-        });
+        const eventsResponse = await api.events.getAll();
 
         if (eventsResponse.ok) {
           const eventsData = await eventsResponse.json();
@@ -62,12 +53,7 @@ export default function ReminderForm({ reminderId = null, userId = null, eventId
     if (reminderId) {
       const fetchReminder = async () => {
         try {
-          const token = localStorage.getItem('token');
-          const response = await fetch(`http://localhost:8080/api/reminders/${reminderId}`, {
-            headers: {
-              'Authorization': token ? `Bearer ${token}` : '',
-            },
-          });
+          const response = await api.reminders.getById(reminderId);
 
           if (response.ok) {
             const reminderData = await response.json();
@@ -107,21 +93,12 @@ export default function ReminderForm({ reminderId = null, userId = null, eventId
     setError('');
 
     try {
-      const token = localStorage.getItem('token');
-      const url = reminderId
-        ? `http://localhost:8080/api/reminders/${reminderId}`
-        : 'http://localhost:8080/api/reminders';
-
-      const method = reminderId ? 'PUT' : 'POST';
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token ? `Bearer ${token}` : '',
-        },
-        body: JSON.stringify(formData),
-      });
+      let response;
+      if (reminderId) {
+        response = await api.reminders.update(reminderId, formData);
+      } else {
+        response = await api.reminders.create(formData);
+      }
 
       if (response.ok) {
         if (onSuccess) {

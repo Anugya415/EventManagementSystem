@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useNotification } from './NotificationContext';
+import { api } from '../lib/api';
 
 export default function UserForm({ userId = null, onSuccess }) {
   const router = useRouter();
@@ -22,12 +23,7 @@ export default function UserForm({ userId = null, onSuccess }) {
     if (userId) {
       const fetchUser = async () => {
         try {
-          const token = localStorage.getItem('token');
-          const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
-            headers: {
-              'Authorization': token ? `Bearer ${token}` : '',
-            },
-          });
+          const response = await api.users.getById(userId);
 
           if (response.ok) {
             const userData = await response.json();
@@ -64,21 +60,12 @@ export default function UserForm({ userId = null, onSuccess }) {
     setError('');
 
     try {
-      const token = localStorage.getItem('token');
-      const url = userId
-        ? `http://localhost:8080/api/users/${userId}`
-        : 'http://localhost:8080/api/users';
-
-      const method = userId ? 'PUT' : 'POST';
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token ? `Bearer ${token}` : '',
-        },
-        body: JSON.stringify(formData),
-      });
+      let response;
+      if (userId) {
+        response = await api.users.update(userId, formData);
+      } else {
+        response = await api.users.create(formData);
+      }
 
       if (response.ok) {
         showNotification(`User ${userId ? 'updated' : 'created'} successfully!`, 'success');

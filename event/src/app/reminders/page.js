@@ -1,102 +1,143 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../components/AuthContext';
+import { useNotification } from '../../components/NotificationContext';
+import { api } from '../../lib/api';
 
 export default function RemindersPage() {
   const [activeTab, setActiveTab] = useState('scheduled');
+  const [scheduledReminders, setScheduledReminders] = useState([]);
+  const [sentReminders, setSentReminders] = useState([]);
+  const [templates, setTemplates] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const { user, isAuthenticated, hasRole } = useAuth();
+  const { showNotification } = useNotification();
 
-  const scheduledReminders = [
-    {
-      id: 1,
-      name: 'Event Reminder - 24 hours',
-      event: 'Tech Conference 2024',
-      type: 'email',
-      scheduledFor: '2024-09-14 09:00',
-      recipients: 450,
-      status: 'scheduled',
-      template: 'event_reminder_24h',
-    },
-    {
-      id: 2,
-      name: 'Payment Reminder',
-      event: 'Wedding Ceremony',
-      type: 'email',
-      scheduledFor: '2024-09-15 10:00',
-      recipients: 25,
-      status: 'scheduled',
-      template: 'payment_reminder',
-    },
-    {
-      id: 3,
-      name: 'Event Confirmation',
-      event: 'Music Festival',
-      type: 'email',
-      scheduledFor: '2024-09-16 14:00',
-      recipients: 800,
-      status: 'scheduled',
-      template: 'confirmation_email',
-    },
-  ];
+  useEffect(() => {
+    // Check authentication and permissions
+    if (!isAuthenticated || (!hasRole('ADMIN') && !hasRole('ORGANIZER'))) {
+      setLoading(false);
+      return;
+    }
+    const fetchRemindersData = async () => {
+      try {
+        // Fetch reminders data from backend
+        const remindersResponse = await api.reminders.getAll();
 
-  const sentReminders = [
-    {
-      id: 4,
-      name: 'Welcome Email',
-      event: 'Tech Conference 2024',
-      type: 'email',
-      sentAt: '2024-09-01 12:00',
-      recipients: 520,
-      opened: 380,
-      clicked: 120,
-      status: 'sent',
-      template: 'welcome_email',
-    },
-    {
-      id: 5,
-      name: 'Event Reminder - 1 week',
-      event: 'Wedding Ceremony',
-      type: 'email',
-      sentAt: '2024-09-08 09:00',
-      recipients: 145,
-      opened: 98,
-      clicked: 45,
-      status: 'sent',
-      template: 'event_reminder_1w',
-    },
-  ];
+        if (remindersResponse.ok) {
+          const reminders = await remindersResponse.json();
 
-  const templates = [
-    {
-      id: 'welcome_email',
-      name: 'Welcome Email',
-      description: 'Sent when attendee registers',
-      type: 'automated',
-    },
-    {
-      id: 'confirmation_email',
-      name: 'Event Confirmation',
-      description: 'Confirms registration details',
-      type: 'automated',
-    },
-    {
-      id: 'event_reminder_1w',
-      name: '1 Week Reminder',
-      description: 'Reminder 1 week before event',
-      type: 'scheduled',
-    },
-    {
-      id: 'event_reminder_24h',
-      name: '24 Hour Reminder',
-      description: 'Final reminder 24 hours before',
-      type: 'scheduled',
-    },
-    {
-      id: 'payment_reminder',
-      name: 'Payment Reminder',
-      description: 'For pending payments',
-      type: 'manual',
-    },
-  ];
+          // Separate reminders by status
+          const scheduled = reminders.filter(r => r.status === 'SCHEDULED');
+          const sent = reminders.filter(r => r.status === 'SENT');
+
+          setScheduledReminders(scheduled);
+          setSentReminders(sent);
+
+          // Generate mock templates (in real app, this would come from backend)
+          const mockTemplates = [
+            {
+              id: 'welcome_email',
+              name: 'Welcome Email',
+              description: 'Sent when attendee registers',
+              type: 'automated',
+            },
+            {
+              id: 'confirmation_email',
+              name: 'Event Confirmation',
+              description: 'Confirms registration details',
+              type: 'automated',
+            },
+            {
+              id: 'event_reminder_1w',
+              name: '1 Week Reminder',
+              description: 'Reminder 1 week before event',
+              type: 'scheduled',
+            },
+            {
+              id: 'event_reminder_24h',
+              name: '24 Hour Reminder',
+              description: 'Final reminder 24 hours before',
+              type: 'scheduled',
+            },
+            {
+              id: 'payment_reminder',
+              name: 'Payment Reminder',
+              description: 'For pending payments',
+              type: 'manual',
+            },
+          ];
+
+          setTemplates(mockTemplates);
+        } else {
+          setError('Failed to load reminders data');
+        }
+      } catch (err) {
+        setError('Network error. Please check if the backend server is running.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRemindersData();
+  }, []);
+
+  // Calculate stats from real data
+  const stats = {
+    totalSent: sentReminders.length,
+    scheduled: scheduledReminders.length,
+    // Mock data for open rate and click rate
+    openRate: 73,
+    clickRate: 28,
+  };
+
+  // Permission check
+  if (!isAuthenticated || (!hasRole('ADMIN') && !hasRole('ORGANIZER'))) {
+    return (
+      <div className="text-center py-12">
+        <div className="text-6xl mb-4">🚫</div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
+        <p className="text-gray-600">You don&apos;t have permission to manage reminders.</p>
+      </div>
+    );
+  }
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Reminders</h1>
+            <p className="text-gray-600 mt-1">Loading reminders...</p>
+          </div>
+        </div>
+        <div className="bg-white p-8 rounded-lg shadow-sm border text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="text-gray-600 mt-4">Loading reminders...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Reminders</h1>
+            <p className="text-gray-600 mt-1">Manage automated and scheduled communications.</p>
+          </div>
+        </div>
+        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
+          ❌ {error}
+        </div>
+      </div>
+    );
+  }
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -133,22 +174,22 @@ export default function RemindersPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <h3 className="text-sm font-medium text-gray-500">Total Sent</h3>
-          <p className="text-3xl font-bold text-gray-900">1,247</p>
+          <p className="text-3xl font-bold text-gray-900">{stats.totalSent}</p>
           <p className="text-sm text-green-600 mt-1">This month</p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <h3 className="text-sm font-medium text-gray-500">Open Rate</h3>
-          <p className="text-3xl font-bold text-blue-600">73%</p>
+          <p className="text-3xl font-bold text-blue-600">{stats.openRate}%</p>
           <p className="text-sm text-green-600 mt-1">+5% from last month</p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <h3 className="text-sm font-medium text-gray-500">Click Rate</h3>
-          <p className="text-3xl font-bold text-purple-600">28%</p>
+          <p className="text-3xl font-bold text-purple-600">{stats.clickRate}%</p>
           <p className="text-sm text-green-600 mt-1">+3% from last month</p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <h3 className="text-sm font-medium text-gray-500">Scheduled</h3>
-          <p className="text-3xl font-bold text-yellow-600">5</p>
+          <p className="text-3xl font-bold text-yellow-600">{stats.scheduled}</p>
           <p className="text-sm text-gray-600 mt-1">Upcoming reminders</p>
         </div>
       </div>

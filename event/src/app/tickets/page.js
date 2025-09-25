@@ -2,11 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '../../components/AuthContext';
 import { useNotification } from '../../components/NotificationContext';
 import TicketForm from '../../components/TicketForm';
+import { api } from '../../lib/api';
 
 export default function TicketsPage() {
   const router = useRouter();
+  const { isAuthenticated, hasRole } = useAuth();
   const { showNotification } = useNotification();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
@@ -17,18 +20,14 @@ export default function TicketsPage() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingTicket, setEditingTicket] = useState(null);
 
+
+
   // Fetch tickets from backend
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem('token');
-
         // Fetch tickets
-        const ticketsResponse = await fetch('http://localhost:8080/api/tickets', {
-          headers: {
-            'Authorization': token ? `Bearer ${token}` : '',
-          },
-        });
+        const ticketsResponse = await api.tickets.getAll();
 
         if (ticketsResponse.ok) {
           const ticketsData = await ticketsResponse.json();
@@ -36,11 +35,7 @@ export default function TicketsPage() {
         }
 
         // Fetch events for reference
-        const eventsResponse = await fetch('http://localhost:8080/api/events', {
-          headers: {
-            'Authorization': token ? `Bearer ${token}` : '',
-          },
-        });
+        const eventsResponse = await api.events.getAll();
 
         if (eventsResponse.ok) {
           const eventsData = await eventsResponse.json();
@@ -56,6 +51,34 @@ export default function TicketsPage() {
     fetchData();
   }, []);
 
+  // Check authentication
+  if (!isAuthenticated) {
+    return (
+      <div className="text-center py-12">
+        <div className="text-6xl mb-4">🔐</div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Authentication Required</h2>
+        <p className="text-gray-600 mb-6">You need to be logged in to access ticket management.</p>
+        <button
+          onClick={() => router.push('/login')}
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium"
+        >
+          Go to Login
+        </button>
+      </div>
+    );
+  }
+
+  // Check permissions (Organizers and Admins can manage tickets)
+  if (!hasRole('ADMIN') && !hasRole('ORGANIZER')) {
+    return (
+      <div className="text-center py-12">
+        <div className="text-6xl mb-4">🚫</div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
+        <p className="text-gray-600">You don&apos;t have permission to manage tickets.</p>
+      </div>
+    );
+  }
+
   // Delete ticket function
   const handleDeleteTicket = async (ticketId, ticketName) => {
     if (!window.confirm(`Are you sure you want to delete "${ticketName}"? This action cannot be undone.`)) {
@@ -63,13 +86,7 @@ export default function TicketsPage() {
     }
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:8080/api/tickets/${ticketId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': token ? `Bearer ${token}` : '',
-        },
-      });
+      const response = await api.tickets.delete(ticketId);
 
       if (response.ok) {
         // Remove ticket from local state

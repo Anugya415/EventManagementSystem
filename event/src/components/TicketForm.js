@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useNotification } from './NotificationContext';
+import { api } from '../lib/api';
 
 export default function TicketForm({ ticketId = null, eventId = null, onSuccess }) {
   const router = useRouter();
@@ -24,12 +25,7 @@ export default function TicketForm({ ticketId = null, eventId = null, onSuccess 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:8080/api/events', {
-          headers: {
-            'Authorization': token ? `Bearer ${token}` : '',
-          },
-        });
+        const response = await api.events.getAll();
 
         if (response.ok) {
           const eventsData = await response.json();
@@ -48,12 +44,7 @@ export default function TicketForm({ ticketId = null, eventId = null, onSuccess 
     if (ticketId) {
       const fetchTicket = async () => {
         try {
-          const token = localStorage.getItem('token');
-          const response = await fetch(`http://localhost:8080/api/tickets/${ticketId}`, {
-            headers: {
-              'Authorization': token ? `Bearer ${token}` : '',
-            },
-          });
+          const response = await api.tickets.getById(ticketId);
 
           if (response.ok) {
             const ticketData = await response.json();
@@ -92,25 +83,18 @@ export default function TicketForm({ ticketId = null, eventId = null, onSuccess 
     setError('');
 
     try {
-      const token = localStorage.getItem('token');
-      const url = ticketId
-        ? `http://localhost:8080/api/tickets/${ticketId}`
-        : 'http://localhost:8080/api/tickets';
+      const ticketData = {
+        ...formData,
+        price: parseFloat(formData.price),
+        quantityAvailable: parseInt(formData.quantityAvailable)
+      };
 
-      const method = ticketId ? 'PUT' : 'POST';
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token ? `Bearer ${token}` : '',
-        },
-        body: JSON.stringify({
-          ...formData,
-          price: parseFloat(formData.price),
-          quantityAvailable: parseInt(formData.quantityAvailable)
-        }),
-      });
+      let response;
+      if (ticketId) {
+        response = await api.tickets.update(ticketId, ticketData);
+      } else {
+        response = await api.tickets.create(ticketData);
+      }
 
       if (response.ok) {
         showNotification(`Ticket ${ticketId ? 'updated' : 'created'} successfully!`, 'success');

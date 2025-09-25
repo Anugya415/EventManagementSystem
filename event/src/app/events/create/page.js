@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { api } from '../../../lib/api';
 
 export default function CreateEventPage() {
   const [formData, setFormData] = useState({
@@ -65,16 +66,7 @@ export default function CreateEventPage() {
         status: 'DRAFT'
       };
 
-      const token = localStorage.getItem('token');
-
-      const response = await fetch('http://localhost:8080/api/events', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token ? `Bearer ${token}` : '',
-        },
-        body: JSON.stringify(eventData),
-      });
+      const response = await api.events.create(eventData);
 
       if (response.ok) {
         const createdEvent = await response.json();

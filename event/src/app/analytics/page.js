@@ -1,27 +1,141 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../components/AuthContext';
+import { api } from '../../lib/api';
 
 export default function AnalyticsPage() {
   const [selectedPeriod, setSelectedPeriod] = useState('30days');
-
-  const analyticsData = {
+  const [analyticsData, setAnalyticsData] = useState({
     overview: {
-      totalEvents: 12,
-      totalAttendees: 2847,
-      totalRevenue: '₹14,92,000',
-      averageRating: 4.6,
+      totalEvents: 0,
+      totalAttendees: 0,
+      totalRevenue: '₹0',
+      averageRating: 0,
     },
-    performance: [
-      { event: 'Tech Conference 2024', attendees: 500, revenue: '₹5,96,000', rating: 4.8 },
-      { event: 'Wedding Ceremony', attendees: 120, revenue: '₹1,44,000', rating: 4.9 },
-      { event: 'Music Festival', attendees: 1000, revenue: '₹7,52,000', rating: 4.5 },
-    ],
+    performance: [],
     trends: {
-      registrations: [120, 150, 180, 200, 250, 300, 350],
-      revenue: [15000, 18000, 22000, 25000, 28000, 32000, 35000],
+      registrations: [0, 0, 0, 0, 0, 0, 0],
+      revenue: [0, 0, 0, 0, 0, 0, 0],
     }
-  };
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const { user, isAuthenticated, hasRole } = useAuth();
+
+  useEffect(() => {
+    // Check authentication and permissions
+    if (!isAuthenticated || (!hasRole('ADMIN') && !hasRole('ORGANIZER'))) {
+      setLoading(false);
+      return;
+    }
+
+    const fetchAnalyticsData = async () => {
+      try {
+        // Fetch events data
+        const eventsResponse = await api.events.getAll();
+        // Fetch payments data
+        const paymentsResponse = await api.payments.getAll();
+
+        if (eventsResponse.ok && paymentsResponse.ok) {
+          const events = await eventsResponse.json();
+          const payments = await paymentsResponse.json();
+
+          // Calculate analytics
+          const totalEvents = events.length;
+          const totalAttendees = events.reduce((sum, event) => sum + (event.currentAttendees || 0), 0);
+          const totalRevenue = payments
+            .filter(p => p.status === 'COMPLETED')
+            .reduce((sum, payment) => sum + payment.amount, 0);
+          const averageRating = events.reduce((sum, event) => sum + (event.rating || 0), 0) / events.length || 0;
+
+          // Get top performing events
+          const performance = events.slice(0, 5).map(event => {
+            const eventPayments = payments.filter(p => p.eventId === event.id && p.status === 'COMPLETED');
+            const eventRevenue = eventPayments.reduce((sum, p) => sum + p.amount, 0);
+            return {
+              event: event.name,
+              attendees: event.currentAttendees || 0,
+              revenue: `₹${eventRevenue.toLocaleString()}`,
+              rating: event.rating || 4.5
+            };
+          });
+
+          // Generate mock trend data (in real app, this would come from backend)
+          const registrations = [120, 150, 180, 200, 250, 300, 350];
+          const revenue = [15000, 18000, 22000, 25000, 28000, 32000, 35000];
+
+          setAnalyticsData({
+            overview: {
+              totalEvents,
+              totalAttendees,
+              totalRevenue: `₹${totalRevenue.toLocaleString()}`,
+              averageRating: Math.round(averageRating * 10) / 10,
+            },
+            performance,
+            trends: {
+              registrations,
+              revenue,
+            }
+          });
+        } else {
+          setError('Failed to load analytics data');
+        }
+      } catch (err) {
+        setError('Network error. Please check if the backend server is running.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnalyticsData();
+  }, []);
+
+  // Permission check
+  if (!isAuthenticated || (!hasRole('ADMIN') && !hasRole('ORGANIZER'))) {
+    return (
+      <div className="text-center py-12">
+        <div className="text-6xl mb-4">🚫</div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
+        <p className="text-gray-600">You don&apos;t have permission to view analytics.</p>
+      </div>
+    );
+  }
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Analytics</h1>
+            <p className="text-gray-600 mt-1">Loading analytics data...</p>
+          </div>
+        </div>
+        <div className="bg-white p-8 rounded-lg shadow-sm border text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="text-gray-600 mt-4">Loading analytics...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Analytics</h1>
+            <p className="text-gray-600 mt-1">Track event performance and analyze success metrics.</p>
+          </div>
+        </div>
+        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
+          ❌ {error}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

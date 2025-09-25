@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../components/AuthContext';
+import { api } from '../../lib/api';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -49,19 +50,14 @@ export default function RegisterPage() {
 
     try {
       // Call registration API
-      const response = await fetch('http://localhost:8080/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-          phone: formData.phone || null
-        }),
-      });
+      const userData = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        phone: formData.phone || null
+      };
 
+      const response = await api.auth.register(userData);
       const data = await response.json();
 
       if (response.ok) {

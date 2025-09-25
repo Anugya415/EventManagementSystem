@@ -14,6 +14,7 @@ const navigationItems = {
     { name: 'Tickets', href: '/tickets', icon: '🎫' },
     { name: 'Payments', href: '/payments', icon: '💳' },
     { name: 'Reminders', href: '/reminders', icon: '🔔' },
+    { name: 'Reports', href: '/reports', icon: '📋' },
     { name: 'Analytics', href: '/analytics', icon: '📈' },
     { name: 'Settings', href: '/settings', icon: '⚙️' },
   ],
@@ -24,6 +25,7 @@ const navigationItems = {
     { name: 'Tickets', href: '/tickets', icon: '🎫' },
     { name: 'Payments', href: '/payments', icon: '💳' },
     { name: 'Reminders', href: '/reminders', icon: '🔔' },
+    { name: 'Reports', href: '/reports', icon: '📋' },
     { name: 'Analytics', href: '/analytics', icon: '📈' },
   ],
   ATTENDEE: [

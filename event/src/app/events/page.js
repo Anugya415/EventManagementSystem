@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useAuth } from '../../components/AuthContext';
 import { useNotification } from '../../components/NotificationContext';
 import PermissionGuard, { ActionButton, usePermission } from '../../components/PermissionGuard';
+import { api } from '../../lib/api';
 
 export default function EventsPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -20,12 +21,7 @@ export default function EventsPage() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:8080/api/events', {
-          headers: {
-            'Authorization': token ? `Bearer ${token}` : '',
-          },
-        });
+        const response = await api.events.getAll();
 
         if (response.ok) {
           const eventsData = await response.json();
@@ -50,13 +46,7 @@ export default function EventsPage() {
     }
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:8080/api/events/${eventId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': token ? `Bearer ${token}` : '',
-        },
-      });
+      const response = await api.events.delete(eventId);
 
       if (response.ok) {
         // Remove event from local state
