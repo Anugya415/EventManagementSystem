@@ -107,6 +107,22 @@ export const api = {
     delete: (id) => apiCall(`/api/payments/${id}`, {
       method: 'DELETE',
     }),
+    updateStatus: (id, status) => apiCall(`/api/payments/${id}/status?status=${status}`, {
+      method: 'PUT',
+    }),
+    processRefund: (id, refundData) => apiCall(`/api/payments/${id}/refund`, {
+      method: 'POST',
+      body: JSON.stringify(refundData),
+    }),
+    bulkUpdateStatus: (bulkData) => apiCall('/api/payments/bulk/status', {
+      method: 'POST',
+      body: JSON.stringify(bulkData),
+    }),
+    bulkRefund: (bulkData) => apiCall('/api/payments/bulk/refund', {
+      method: 'POST',
+      body: JSON.stringify(bulkData),
+    }),
+    search: (query) => apiCall(`/api/payments/search?query=${encodeURIComponent(query)}`),
   },
 
   // Reminder endpoints
@@ -124,6 +140,29 @@ export const api = {
     delete: (id) => apiCall(`/api/reminders/${id}`, {
       method: 'DELETE',
     }),
+  },
+
+  // Role request endpoints
+  roleRequests: {
+    submit: (requestData) => apiCall('/api/role-requests', {
+      method: 'POST',
+      body: JSON.stringify(requestData),
+    }),
+    getUserRequests: (userId) => apiCall(`/api/role-requests/user/${userId}`),
+    getAll: () => apiCall('/api/role-requests'),
+    getPending: () => apiCall('/api/role-requests/pending'),
+    approve: (requestId, approvalData) => apiCall(`/api/role-requests/${requestId}/approve`, {
+      method: 'PUT',
+      body: JSON.stringify(approvalData),
+    }),
+    reject: (requestId, rejectionData) => apiCall(`/api/role-requests/${requestId}/reject`, {
+      method: 'PUT',
+      body: JSON.stringify(rejectionData),
+    }),
+    delete: (requestId) => apiCall(`/api/role-requests/${requestId}`, {
+      method: 'DELETE',
+    }),
+    getById: (requestId) => apiCall(`/api/role-requests/${requestId}`),
   },
 
   // Reports endpoints

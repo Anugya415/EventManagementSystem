@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../components/AuthContext';
 import { useNotification } from '../../components/NotificationContext';
+import TicketPurchaseModal from '../../components/TicketPurchaseModal';
 import { api } from '../../lib/api';
 
 export default function MyTicketsPage() {
@@ -11,6 +12,8 @@ export default function MyTicketsPage() {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState(null);
   const { user, isAuthenticated } = useAuth();
   const { showNotification } = useNotification();
 
@@ -48,6 +51,20 @@ export default function MyTicketsPage() {
 
     fetchMyTickets();
   }, [user]);
+
+  // Handle ticket purchase
+  const handlePurchaseTicket = (ticket) => {
+    setSelectedTicket(ticket);
+    setShowPurchaseModal(true);
+  };
+
+  // Handle successful purchase
+  const handlePurchaseSuccess = (payment) => {
+    // Add the new payment to the payments list
+    setPayments(prev => [...prev, payment]);
+    // Refresh the page to show updated data
+    window.location.reload();
+  };
 
   // Check authentication
   if (!isAuthenticated) {
@@ -203,7 +220,7 @@ export default function MyTicketsPage() {
               </div>
               
               <button
-                onClick={() => alert(`Purchase Ticket:\n${ticket.name}\nEvent: ${ticket.eventName}\nPrice: ₹${ticket.price}\nAvailable: ${ticket.quantityAvailable}\n\nNote: This is a demo. In a real app, this would redirect to a payment page.`)}
+                onClick={() => handlePurchaseTicket(ticket)}
                 className="w-full bg-blue-600 text-white px-3 py-2 rounded text-sm hover:bg-blue-700 transition-colors"
               >
                 Purchase Ticket
@@ -234,6 +251,17 @@ export default function MyTicketsPage() {
           <p className="text-gray-600">You haven&apos;t purchased any tickets yet. Check out the available tickets above!</p>
         </div>
       )}
+
+      {/* Ticket Purchase Modal */}
+      <TicketPurchaseModal
+        ticket={selectedTicket}
+        isOpen={showPurchaseModal}
+        onClose={() => {
+          setShowPurchaseModal(false);
+          setSelectedTicket(null);
+        }}
+        onSuccess={handlePurchaseSuccess}
+      />
     </div>
   );
 }
