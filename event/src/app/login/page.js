@@ -21,7 +21,8 @@ export default function LoginPage() {
     try {
       const result = await login(email, password);
       if (result.success) {
-        router.push('/');
+        // Redirect to dashboard after successful login
+        router.push('/dashboard');
       } else {
         setError(result.error);
       }

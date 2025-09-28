@@ -13,7 +13,6 @@ const navigationItems = {
     { name: 'Attendees', href: '/attendees', icon: '👤' },
     { name: 'Tickets', href: '/tickets', icon: '🎫' },
     { name: 'Payments', href: '/payments', icon: '💳' },
-    { name: 'Role Requests', href: '/manage-role-requests', icon: '👑' },
     { name: 'Reminders', href: '/reminders', icon: '🔔' },
     { name: 'Reports', href: '/reports', icon: '📋' },
     { name: 'Analytics', href: '/analytics', icon: '📈' },
@@ -34,7 +33,6 @@ const navigationItems = {
     { name: 'My Events', href: '/my-events', icon: '🎪' },
     { name: 'My Tickets', href: '/my-tickets', icon: '🎫' },
     { name: 'Payments', href: '/payments', icon: '💳' },
-    { name: 'Request Role', href: '/request-role', icon: '⬆️' },
     { name: 'Profile', href: '/profile', icon: '👤' },
   ],
   GUEST: [

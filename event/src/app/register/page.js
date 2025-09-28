@@ -75,7 +75,7 @@ export default function RegisterPage() {
 
           // Redirect to dashboard after successful registration
           setTimeout(() => {
-            router.push('/');
+            router.push('/dashboard');
           }, 2000);
         }
       } else {
