@@ -1,6 +1,7 @@
 com/eventman/controller/EventController.class
 com/eventman/security/SecurityConfig.class
 com/eventman/controller/TicketController.class
+com/eventman/RoleRequest$RequestStatus.class
 com/eventman/TicketRepository.class
 com/eventman/User.class
 com/eventman/controller/AuthController$AuthUser.class
@@ -8,6 +9,8 @@ com/eventman/Event$EventStatus.class
 com/eventman/security/PermissionService$Role.class
 com/eventman/security/JwtAuthenticationFilter.class
 com/eventman/controller/ReportController.class
+com/eventman/controller/RoleRequestController.class
+com/eventman/RoleRequest.class
 com/eventman/Ticket.class
 com/eventman/Ticket$TicketStatus.class
 com/eventman/security/JwtAuthenticationEntryPoint.class
@@ -22,6 +25,7 @@ com/eventman/Reminder$ReminderStatus.class
 com/eventman/Payment$PaymentStatus.class
 com/eventman/controller/AuthController$LoginRequest.class
 com/eventman/security/PermissionService$Permission.class
+com/eventman/RoleRequestRepository.class
 com/eventman/security/JwtUtil.class
 com/eventman/DataInitializer.class
 com/eventman/controller/ReminderController.class

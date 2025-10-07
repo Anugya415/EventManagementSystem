@@ -23,6 +23,10 @@ export default function ProfilePage() {
     newPassword: '',
     confirmPassword: ''
   });
+  const [roleRequests, setRoleRequests] = useState([]);
+  const [showRoleRequestForm, setShowRoleRequestForm] = useState(false);
+  const [roleRequestReason, setRoleRequestReason] = useState('');
+  const [submittingRequest, setSubmittingRequest] = useState(false);
   const { user, isAuthenticated } = useAuth();
   const { showNotification } = useNotification();
 
@@ -80,6 +84,27 @@ export default function ProfilePage() {
 
     if (user) {
       loadProfile();
+    }
+  }, [user]);
+
+  // Load user's role requests
+  useEffect(() => {
+    const loadRoleRequests = async () => {
+      if (user && user.id) {
+        try {
+          const response = await api.roleRequests.getUserRequests(user.id);
+          if (response.ok) {
+            const requests = await response.json();
+            setRoleRequests(requests);
+          }
+        } catch (error) {
+          console.error('Failed to load role requests:', error);
+        }
+      }
+    };
+
+    if (user) {
+      loadRoleRequests();
     }
   }, [user]);
 
@@ -157,6 +182,47 @@ export default function ProfilePage() {
       setLoading(false);
     }
   };
+
+  // Handle role request submission
+  const handleRoleRequestSubmit = async (e) => {
+    e.preventDefault();
+    if (!roleRequestReason.trim()) {
+      showNotification('Please provide a reason for your role request', 'error');
+      return;
+    }
+
+    setSubmittingRequest(true);
+
+    try {
+      const requestData = {
+        userId: user.id,
+        requestedRole: 'ORGANIZER',
+        reason: roleRequestReason.trim()
+      };
+
+      const response = await api.roleRequests.submit(requestData);
+
+      if (response.ok) {
+        const result = await response.json();
+        setRoleRequests(prev => [result.request, ...prev]);
+        setRoleRequestReason('');
+        setShowRoleRequestForm(false);
+        showNotification('Role request submitted successfully! An administrator will review it soon.', 'success');
+      } else {
+        const errorData = await response.json();
+        showNotification(errorData.message || 'Failed to submit role request', 'error');
+      }
+    } catch (error) {
+      showNotification('Network error. Please try again.', 'error');
+    } finally {
+      setSubmittingRequest(false);
+    }
+  };
+
+  // Check if user has pending request for organizer role
+  const hasPendingOrganizerRequest = roleRequests.some(
+    request => request.requestedRole === 'ORGANIZER' && request.status === 'PENDING'
+  );
 
   const getRoleColor = (role) => {
     switch (role) {
@@ -359,7 +425,7 @@ export default function ProfilePage() {
             <div className="text-center">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">
-                  {profileData.role === 'ADMIN' ? '👑' : 
+                  {profileData.role === 'ADMIN' ? '👑' :
                    profileData.role === 'ORGANIZER' ? '🎪' : '👤'}
                 </span>
               </div>
@@ -371,6 +437,122 @@ export default function ProfilePage() {
               </p>
             </div>
           </div>
+
+          {/* Role Requests - Only show for attendees */}
+          {profileData.role === 'ATTENDEE' && (
+            <div className="bg-white rounded-lg shadow-sm border p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Role Requests</h3>
+
+              {/* Show existing requests */}
+              {roleRequests.length > 0 && (
+                <div className="mb-4">
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">Your Requests</h4>
+                  <div className="space-y-2">
+                    {roleRequests.map((request) => (
+                      <div key={request.id} className="p-3 bg-gray-50 rounded-lg">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <p className="text-sm font-medium">
+                              Request for {request.requestedRole} role
+                            </p>
+                            <p className="text-xs text-gray-600 mt-1">
+                              Submitted: {new Date(request.requestedAt).toLocaleDateString()}
+                            </p>
+                            {request.reason && (
+                              <p className="text-xs text-gray-600 mt-1">
+                                Reason: {request.reason}
+                              </p>
+                            )}
+                          </div>
+                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                            request.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
+                            request.status === 'APPROVED' ? 'bg-green-100 text-green-800' :
+                            'bg-red-100 text-red-800'
+                          }`}>
+                            {request.status}
+                          </span>
+                        </div>
+                        {request.status === 'REJECTED' && request.adminNotes && (
+                          <p className="text-xs text-red-600 mt-2">
+                            Admin notes: {request.adminNotes}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Request form or button */}
+              {!hasPendingOrganizerRequest ? (
+                <div>
+                  {!showRoleRequestForm ? (
+                    <div className="text-center">
+                      <p className="text-sm text-gray-600 mb-4">
+                        Interested in becoming an event organizer? Request the organizer role to create and manage events.
+                      </p>
+                      <button
+                        onClick={() => setShowRoleRequestForm(true)}
+                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium"
+                      >
+                        Request Organizer Role
+                      </button>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleRoleRequestSubmit} className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Why do you want to become an organizer? *
+                        </label>
+                        <textarea
+                          required
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          rows={4}
+                          placeholder="Please explain your interest in becoming an event organizer..."
+                          value={roleRequestReason}
+                          onChange={(e) => setRoleRequestReason(e.target.value)}
+                        />
+                      </div>
+                      <div className="flex justify-end space-x-3">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowRoleRequestForm(false);
+                            setRoleRequestReason('');
+                          }}
+                          className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={submittingRequest}
+                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                        >
+                          {submittingRequest && (
+                            <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                          )}
+                          <span>{submittingRequest ? 'Submitting...' : 'Submit Request'}</span>
+                        </button>
+                      </div>
+                    </form>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <span className="text-xl">⏳</span>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    You have a pending organizer role request. An administrator will review it soon.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Quick Actions */}
           <div className="bg-white rounded-lg shadow-sm border p-6">

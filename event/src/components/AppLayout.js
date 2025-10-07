@@ -1,21 +1,12 @@
 'use client';
 
 import { useAuth } from './AuthContext';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import HomeLayout from './HomeLayout';
 import DashboardLayout from './DashboardLayout';
 
 export default function AppLayout({ children }) {
   const { isAuthenticated, loading } = useAuth();
-  const router = useRouter();
 
-  useEffect(() => {
-    // If user is authenticated and on the home page, redirect to dashboard
-    if (isAuthenticated && window.location.pathname === '/') {
-      router.push('/');
-    }
-  }, [isAuthenticated, router]);
 
   if (loading) {
     return (

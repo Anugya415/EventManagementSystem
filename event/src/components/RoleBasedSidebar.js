@@ -9,6 +9,7 @@ const navigationItems = {
   ADMIN: [
     { name: 'Dashboard', href: '/', icon: '📊' },
     { name: 'Users', href: '/users', icon: '👥' },
+    { name: 'Role Requests', href: '/admin/role-requests', icon: '📝' },
     { name: 'Events', href: '/events', icon: '🎪' },
     { name: 'Attendees', href: '/attendees', icon: '👤' },
     { name: 'Tickets', href: '/tickets', icon: '🎫' },

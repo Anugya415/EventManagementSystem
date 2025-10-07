@@ -12,7 +12,7 @@ export default function Home() {
   useEffect(() => {
     if (!loading && isAuthenticated) {
       // Redirect authenticated users to dashboard
-      router.push('/');
+      router.push('/dashboard');
     }
   }, [isAuthenticated, loading, router]);
 
