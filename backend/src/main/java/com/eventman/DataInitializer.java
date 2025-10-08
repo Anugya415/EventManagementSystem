@@ -15,18 +15,15 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Sample data is now loaded from data.sql file
-        // Commenting out programmatic data initialization to use SQL file instead
-        /*
-        // Check if data already exists - users must be created before events due to foreign key constraints
+        // Initialize sample data if database is empty
         if (userRepository.count() == 0) {
+            System.out.println("📊 Initializing sample data for Event Management System...");
             initializeSampleUsers();
-        }
-
-        if (eventRepository.count() == 0) {
             initializeSampleEvents();
+            System.out.println("✅ Sample data initialization completed!");
+        } else {
+            System.out.println("ℹ️  Database already contains data. Skipping initialization.");
         }
-        */
     }
 
     private void initializeSampleEvents() {
