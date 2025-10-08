@@ -8,7 +8,7 @@ import { api } from '../../../lib/api';
 
 export default function RoleRequestsPage() {
   const router = useRouter();
-  const { isAuthenticated, hasRole } = useAuth();
+  const { isAuthenticated, hasRole, user } = useAuth();
   const { showNotification } = useNotification();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -85,7 +85,7 @@ export default function RoleRequestsPage() {
 
     try {
       const actionData = {
-        adminId: useAuth().user.id,
+        adminId: user.id,
         adminNotes: adminNotes.trim()
       };
 
@@ -401,3 +401,4 @@ ${request.adminNotes ? `Admin Notes: ${request.adminNotes}` : ''}
     </div>
   );
 }
+

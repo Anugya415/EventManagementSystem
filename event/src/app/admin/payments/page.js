@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '../../components/AuthContext';
-import { useNotification } from '../../components/NotificationContext';
+import { useAuth } from '../../../components/AuthContext';
+import { useNotification } from '../../../components/NotificationContext';
 import Link from 'next/link';
-import { api } from '../../lib/api';
-import PaymentAdminActions from '../../components/PaymentAdminActions';
-import PaymentDetailsModal from '../../components/PaymentDetailsModal';
+import { api } from '../../../lib/api';
+import PaymentAdminActions from '../../../components/PaymentAdminActions';
+import PaymentDetailsModal from '../../../components/PaymentDetailsModal';
 
 export default function PaymentsPage() {
   const [filterStatus, setFilterStatus] = useState('all');

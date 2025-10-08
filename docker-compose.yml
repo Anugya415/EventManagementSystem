@@ -5,15 +5,12 @@ services:
     container_name: eventman-db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpassword}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-12345678}
       MYSQL_DATABASE: ${DB_NAME:-eventman_db}
-      MYSQL_USER: ${DB_USERNAME:-eventuser}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-eventpass123}
     ports:
       - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
-      - ./backend/src/main/resources/data.sql:/docker-entrypoint-initdb.d/data.sql
     networks:
       - eventman-network
     healthcheck:
@@ -32,8 +29,8 @@ services:
       DB_HOST: db
       DB_PORT: 3306
       DB_NAME: ${DB_NAME:-eventman_db}
-      DB_USERNAME: ${DB_USERNAME:-eventuser}
-      DB_PASSWORD: ${DB_PASSWORD:-eventpass123}
+      DB_USERNAME: ${DB_USERNAME:-root}
+      DB_PASSWORD: ${DB_PASSWORD:-12345678}
       SPRING_PROFILES_ACTIVE: docker
     ports:
       - "8081:8080"
@@ -57,7 +54,7 @@ services:
     container_name: eventman-frontend
     restart: unless-stopped
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8081
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
     ports:
       - "3002:3000"
     depends_on:
