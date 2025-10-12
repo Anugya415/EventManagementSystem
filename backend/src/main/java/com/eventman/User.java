@@ -1,9 +1,12 @@
 package com.eventman;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
 
     @Id
@@ -17,6 +20,7 @@ public class User {
     private String name;
 
     @Column(nullable = false, length = 500)
+    @JsonIgnore
     private String password;
 
     @Column

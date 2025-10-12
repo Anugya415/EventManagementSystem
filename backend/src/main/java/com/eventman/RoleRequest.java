@@ -1,9 +1,11 @@
 package com.eventman;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "role_requests")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class RoleRequest {
 
     @Id
@@ -12,6 +14,7 @@ public class RoleRequest {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "password"})
     private User user;
 
     // Store user info separately to avoid join issues
@@ -45,6 +48,7 @@ public class RoleRequest {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reviewed_by")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "password"})
     private User reviewedBy;
 
     // Store reviewer info separately to avoid join issues

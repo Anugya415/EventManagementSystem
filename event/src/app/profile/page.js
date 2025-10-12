@@ -27,7 +27,7 @@ export default function ProfilePage() {
   const [showRoleRequestForm, setShowRoleRequestForm] = useState(false);
   const [roleRequestReason, setRoleRequestReason] = useState('');
   const [submittingRequest, setSubmittingRequest] = useState(false);
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, refreshUser } = useAuth();
   const { showNotification } = useNotification();
 
   // Load user profile data
@@ -87,15 +87,31 @@ export default function ProfilePage() {
     }
   }, [user]);
 
-  // Load user's role requests
+  // Load user's role requests and refresh user data
   useEffect(() => {
     const loadRoleRequests = async () => {
       if (user && user.id) {
         try {
+          // Refresh user data to get latest role
+          await refreshUser();
+          
           const response = await api.roleRequests.getUserRequests(user.id);
           if (response.ok) {
             const requests = await response.json();
             setRoleRequests(requests);
+            
+            // Check if there's an approved request and show notification
+            const recentlyApproved = requests.find(
+              req => req.status === 'APPROVED' && 
+              new Date(req.reviewedAt).getTime() > Date.now() - 24 * 60 * 60 * 1000 // Within last 24 hours
+            );
+            
+            if (recentlyApproved) {
+              showNotification(
+                `Your ${recentlyApproved.requestedRole} role request has been approved! You now have ${recentlyApproved.requestedRole} access.`,
+                'success'
+              );
+            }
           }
         } catch (error) {
           console.error('Failed to load role requests:', error);

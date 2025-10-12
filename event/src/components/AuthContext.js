@@ -69,6 +69,35 @@ export const AuthProvider = ({ children }) => {
     return user?.roles?.some(role => roles.includes(role));
   };
 
+  // Refresh user data from the backend (useful after role updates)
+  const refreshUser = async () => {
+    if (!user || !user.id) return { success: false, error: 'No user logged in' };
+
+    try {
+      const response = await api.users.getById(user.id);
+
+      if (response.ok) {
+        const userData = await response.json();
+        
+        // Update user object with latest data
+        const updatedUser = {
+          ...user,
+          name: userData.name,
+          email: userData.email,
+          roles: [userData.role], // Update the role from backend
+        };
+
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        return { success: true, user: updatedUser };
+      } else {
+        return { success: false, error: 'Failed to refresh user data' };
+      }
+    } catch (error) {
+      return { success: false, error: 'Network error while refreshing user data' };
+    }
+  };
+
   const value = {
     user,
     loading,
@@ -76,6 +105,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     hasRole,
     hasAnyRole,
+    refreshUser,
     isAuthenticated: !!user,
   };
 

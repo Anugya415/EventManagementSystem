@@ -21,24 +21,26 @@ export default function RoleRequestsPage() {
   const [selectedRequest, setSelectedRequest] = useState(null);
 
   // Fetch role requests
-  useEffect(() => {
-    const fetchRequests = async () => {
-      try {
-        const response = await api.roleRequests.getAll();
+  const fetchRequests = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const response = await api.roleRequests.getAll();
 
-        if (response.ok) {
-          const requestsData = await response.json();
-          setRequests(requestsData);
-        } else {
-          setError('Failed to load role requests');
-        }
-      } catch (err) {
-        setError('Network error. Please check if the backend server is running.');
-      } finally {
-        setLoading(false);
+      if (response.ok) {
+        const requestsData = await response.json();
+        setRequests(requestsData);
+      } else {
+        setError('Failed to load role requests');
       }
-    };
+    } catch (err) {
+      setError('Network error. Please check if the backend server is running.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchRequests();
   }, []);
 
@@ -99,19 +101,14 @@ export default function RoleRequestsPage() {
       if (response.ok) {
         const result = await response.json();
 
-        // Update the request in local state
-        setRequests(prevRequests =>
-          prevRequests.map(req =>
-            req.id === selectedRequest
-              ? { ...req, status: modalAction === 'approve' ? 'APPROVED' : 'REJECTED', adminNotes: adminNotes.trim(), reviewedAt: result.request.reviewedAt, reviewedByName: result.request.reviewedByName }
-              : req
-          )
-        );
-
         showNotification(
-          `Role request ${modalAction}d successfully!`,
+          `Role request ${modalAction}d successfully! ${modalAction === 'approve' ? 'User role has been updated to ' + result.request.requestedRole : ''}`,
           'success'
         );
+        
+        // Refresh the requests list to show updated data
+        await fetchRequests();
+        
         setShowModal(false);
         setSelectedRequest(null);
         setAdminNotes('');
@@ -184,6 +181,13 @@ export default function RoleRequestsPage() {
           <h1 className="text-3xl font-bold text-gray-900">Role Requests</h1>
           <p className="text-gray-600 mt-1">Manage user role upgrade requests.</p>
         </div>
+        <button
+          onClick={fetchRequests}
+          disabled={loading}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium disabled:opacity-50 flex items-center space-x-2"
+        >
+          <span>{loading ? 'Refreshing...' : '🔄 Refresh'}</span>
+        </button>
       </div>
 
       {/* Error display */}
