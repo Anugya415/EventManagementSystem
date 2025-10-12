@@ -1,8 +1,7 @@
 package com.eventman;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "users")
@@ -20,7 +19,6 @@ public class User {
     private String name;
 
     @Column(nullable = false, length = 500)
-    @JsonIgnore
     private String password;
 
     @Column
