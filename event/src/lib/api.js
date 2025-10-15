@@ -39,6 +39,14 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(userData),
     }),
+    verifyEmail: (email, code, reason) => apiCall('/api/auth/verify-email', {
+      method: 'POST',
+      body: JSON.stringify({ email, code, reason }),
+    }),
+    resendVerification: (email) => apiCall('/api/auth/resend-verification', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }),
   },
 
   // Event endpoints

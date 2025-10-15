@@ -31,6 +31,15 @@ public class User {
     @Column(name = "created_at", nullable = true)
     private String createdAt;
 
+    @Column(name = "email_verified", nullable = false)
+    private Boolean emailVerified = false;
+
+    @Column(name = "verification_code", nullable = true)
+    private String verificationCode;
+
+    @Column(name = "verification_code_expires", nullable = true)
+    private String verificationCodeExpires;
+
     // Default constructor
     public User() {}
 
@@ -43,6 +52,7 @@ public class User {
         this.phone = phone;
         this.role = role;
         this.createdAt = createdAt;
+        this.emailVerified = false;
     }
 
     // Getters and setters
@@ -66,6 +76,15 @@ public class User {
 
     public String getCreatedAt() { return createdAt; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
+
+    public Boolean getEmailVerified() { return emailVerified; }
+    public void setEmailVerified(Boolean emailVerified) { this.emailVerified = emailVerified; }
+
+    public String getVerificationCode() { return verificationCode; }
+    public void setVerificationCode(String verificationCode) { this.verificationCode = verificationCode; }
+
+    public String getVerificationCodeExpires() { return verificationCodeExpires; }
+    public void setVerificationCodeExpires(String verificationCodeExpires) { this.verificationCodeExpires = verificationCodeExpires; }
 
     public enum UserRole {
         ADMIN, ORGANIZER, ATTENDEE

@@ -61,22 +61,27 @@ export default function RegisterPage() {
       const data = await response.json();
 
       if (response.ok) {
-        setSuccess(true);
+        if (data.requiresVerification) {
+          // Redirect to email verification page
+          router.push(`/verify-email?email=${encodeURIComponent(formData.email)}`);
+        } else {
+          setSuccess(true);
 
-        // Auto-login the user with the returned token
-        if (data.token) {
-          localStorage.setItem('token', data.token);
-          localStorage.setItem('user', JSON.stringify({
-            id: data.user.id,
-            email: data.user.email,
-            name: data.user.name,
-            roles: data.user.roles
-          }));
+          // Auto-login the user with the returned token
+          if (data.token) {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify({
+              id: data.user.id,
+              email: data.user.email,
+              name: data.user.name,
+              roles: data.user.roles
+            }));
 
-          // Redirect to dashboard after successful registration
-          setTimeout(() => {
-            router.push('/dashboard');
-          }, 2000);
+            // Redirect to dashboard after successful registration
+            setTimeout(() => {
+              router.push('/dashboard');
+            }, 2000);
+          }
         }
       } else {
         setError(data.message || 'Registration failed');

@@ -3,6 +3,8 @@ package com.eventman.controller;
 import com.eventman.User;
 import com.eventman.UserRepository;
 import com.eventman.security.JwtUtil;
+import com.eventman.service.EmailService;
+import com.eventman.service.VerificationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -19,13 +21,17 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final EmailService emailService;
+    private final VerificationService verificationService;
 
     // In-memory user storage for demo purposes (keeping for backward compatibility)
     private final java.util.Map<String, AuthUser> users = new java.util.concurrent.ConcurrentHashMap<>();
 
-    public AuthController(JwtUtil jwtUtil, UserRepository userRepository) {
+    public AuthController(JwtUtil jwtUtil, UserRepository userRepository, EmailService emailService, VerificationService verificationService) {
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
+        this.emailService = emailService;
+        this.verificationService = verificationService;
         this.passwordEncoder = new BCryptPasswordEncoder();
         // Initialize with demo users
         initializeDemoUsers();
@@ -150,20 +156,105 @@ public class AuthController {
             newUser.setRole(User.UserRole.ATTENDEE);
             newUser.setPassword(passwordEncoder.encode(password));
             newUser.setCreatedAt(java.time.LocalDateTime.now().toString());
+            newUser.setEmailVerified(false);
+
+            // Generate verification code
+            String verificationCode = verificationService.generateVerificationCode();
+            String expirationTime = verificationService.generateExpirationTime();
+            newUser.setVerificationCode(verificationCode);
+            newUser.setVerificationCodeExpires(expirationTime);
 
             User savedUser = userRepository.save(newUser);
 
-            // Generate JWT token for immediate login
-            String[] roles = {"ATTENDEE"};
+            // Send verification email
+            try {
+                emailService.sendVerificationEmail(email, verificationCode);
+            } catch (Exception e) {
+                // Log the error but don't fail registration
+                System.err.println("Failed to send verification email: " + e.getMessage());
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Registration successful! Please check your email for verification code.");
+            response.put("email", email);
+            response.put("requiresVerification", true);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("message", "Registration failed. Please try again.");
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+
+    @PostMapping("/verify-email")
+    public ResponseEntity<?> verifyEmail(@RequestBody EmailVerificationRequest verificationRequest) {
+        try {
+            String email = verificationRequest.getEmail();
+            String code = verificationRequest.getCode();
+
+            // Validation
+            if (email == null || email.trim().isEmpty()) {
+                Map<String, String> error = new HashMap<>();
+                error.put("message", "Email is required");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            if (code == null || code.trim().isEmpty()) {
+                Map<String, String> error = new HashMap<>();
+                error.put("message", "Verification code is required");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            // Find user by email
+            Optional<User> userOpt = userRepository.findByEmail(email);
+            if (userOpt.isEmpty()) {
+                Map<String, String> error = new HashMap<>();
+                error.put("message", "User not found");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            User user = userOpt.get();
+
+            // Check if already verified
+            if (user.getEmailVerified()) {
+                Map<String, String> error = new HashMap<>();
+                error.put("message", "Email is already verified");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            // Check if verification code matches
+            if (!code.equals(user.getVerificationCode())) {
+                Map<String, String> error = new HashMap<>();
+                error.put("message", "Invalid verification code");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            // Check if code is expired
+            if (verificationService.isCodeExpired(user.getVerificationCodeExpires())) {
+                Map<String, String> error = new HashMap<>();
+                error.put("message", "Verification code has expired. Please request a new one.");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            // Verify the email
+            user.setEmailVerified(true);
+            user.setVerificationCode(null);
+            user.setVerificationCodeExpires(null);
+            userRepository.save(user);
+
+            // Generate JWT token for login
+            String[] roles = {user.getRole().name()};
             String token = jwtUtil.generateToken(email, roles);
 
             Map<String, Object> response = new HashMap<>();
-            response.put("message", "Registration successful! Welcome to Festify!");
+            response.put("message", "Email verified successfully!");
             response.put("token", token);
             response.put("user", Map.of(
-                "id", savedUser.getId(),
-                "email", savedUser.getEmail(),
-                "name", savedUser.getName(),
+                "id", user.getId(),
+                "email", user.getEmail(),
+                "name", user.getName(),
                 "roles", roles
             ));
 
@@ -171,7 +262,63 @@ public class AuthController {
 
         } catch (Exception e) {
             Map<String, String> error = new HashMap<>();
-            error.put("message", "Registration failed. Please try again.");
+            error.put("message", "Email verification failed. Please try again.");
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+
+    @PostMapping("/resend-verification")
+    public ResponseEntity<?> resendVerificationCode(@RequestBody ResendVerificationRequest request) {
+        try {
+            String email = request.getEmail();
+
+            if (email == null || email.trim().isEmpty()) {
+                Map<String, String> error = new HashMap<>();
+                error.put("message", "Email is required");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            // Find user by email
+            Optional<User> userOpt = userRepository.findByEmail(email);
+            if (userOpt.isEmpty()) {
+                Map<String, String> error = new HashMap<>();
+                error.put("message", "User not found");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            User user = userOpt.get();
+
+            // Check if already verified
+            if (user.getEmailVerified()) {
+                Map<String, String> error = new HashMap<>();
+                error.put("message", "Email is already verified");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            // Generate new verification code
+            String verificationCode = verificationService.generateVerificationCode();
+            String expirationTime = verificationService.generateExpirationTime();
+            user.setVerificationCode(verificationCode);
+            user.setVerificationCodeExpires(expirationTime);
+            userRepository.save(user);
+
+            // Send verification email
+            try {
+                emailService.sendVerificationEmail(email, verificationCode);
+            } catch (Exception e) {
+                Map<String, String> error = new HashMap<>();
+                error.put("message", "Failed to send verification email. Please try again.");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Verification code sent successfully!");
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("message", "Failed to resend verification code. Please try again.");
             return ResponseEntity.badRequest().body(error);
         }
     }
@@ -238,5 +385,31 @@ public class AuthController {
 
         public String[] getRoles() { return roles; }
         public void setRoles(String[] roles) { this.roles = roles; }
+    }
+
+    public static class EmailVerificationRequest {
+        private String email;
+        private String code;
+        private String reason; // optional, captured from UI but not persisted
+
+        public EmailVerificationRequest() {}
+
+        public String getEmail() { return email; }
+        public void setEmail(String email) { this.email = email; }
+
+        public String getCode() { return code; }
+        public void setCode(String code) { this.code = code; }
+
+        public String getReason() { return reason; }
+        public void setReason(String reason) { this.reason = reason; }
+    }
+
+    public static class ResendVerificationRequest {
+        private String email;
+
+        public ResendVerificationRequest() {}
+
+        public String getEmail() { return email; }
+        public void setEmail(String email) { this.email = email; }
     }
 }
