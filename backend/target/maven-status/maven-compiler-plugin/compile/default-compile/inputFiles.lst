@@ -5,6 +5,7 @@
 /Users/nithinkumark/Developer/next/EventManagementSystem/backend/src/main/java/com/eventman/RoleRequest.java
 /Users/nithinkumark/Developer/next/EventManagementSystem/backend/src/main/java/com/eventman/DataInitializer.java
 /Users/nithinkumark/Developer/next/EventManagementSystem/backend/src/main/java/com/eventman/Reminder.java
+/Users/nithinkumark/Developer/next/EventManagementSystem/backend/src/main/java/com/eventman/service/VerificationService.java
 /Users/nithinkumark/Developer/next/EventManagementSystem/backend/src/main/java/com/eventman/security/JwtUtil.java
 /Users/nithinkumark/Developer/next/EventManagementSystem/backend/src/main/java/com/eventman/controller/AuthController.java
 /Users/nithinkumark/Developer/next/EventManagementSystem/backend/src/main/java/com/eventman/security/PermissionService.java
@@ -16,6 +17,7 @@
 /Users/nithinkumark/Developer/next/EventManagementSystem/backend/src/main/java/com/eventman/controller/ReportController.java
 /Users/nithinkumark/Developer/next/EventManagementSystem/backend/src/main/java/com/eventman/Ticket.java
 /Users/nithinkumark/Developer/next/EventManagementSystem/backend/src/main/java/com/eventman/controller/RoleRequestController.java
+/Users/nithinkumark/Developer/next/EventManagementSystem/backend/src/main/java/com/eventman/service/EmailService.java
 /Users/nithinkumark/Developer/next/EventManagementSystem/backend/src/main/java/com/eventman/TicketRepository.java
 /Users/nithinkumark/Developer/next/EventManagementSystem/backend/src/main/java/com/eventman/EventRepository.java
 /Users/nithinkumark/Developer/next/EventManagementSystem/backend/src/main/java/com/eventman/PaymentRepository.java
