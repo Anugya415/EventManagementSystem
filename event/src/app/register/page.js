@@ -3,12 +3,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../../components/AuthContext';
 import { api } from '../../lib/api';
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { login } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -61,28 +59,12 @@ export default function RegisterPage() {
       const data = await response.json();
 
       if (response.ok) {
-        if (data.requiresVerification) {
-          // Redirect to email verification page
-          router.push(`/verify-email?email=${encodeURIComponent(formData.email)}`);
-        } else {
-          setSuccess(true);
+        setSuccess(true);
 
-          // Auto-login the user with the returned token
-          if (data.token) {
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify({
-              id: data.user.id,
-              email: data.user.email,
-              name: data.user.name,
-              roles: data.user.roles
-            }));
-
-            // Redirect to dashboard after successful registration
-            setTimeout(() => {
-              router.push('/dashboard');
-            }, 2000);
-          }
-        }
+        // Don't auto-login, just redirect to login page
+        setTimeout(() => {
+          router.push('/login');
+        }, 3000);
       } else {
         setError(data.message || 'Registration failed');
       }
@@ -106,10 +88,10 @@ export default function RegisterPage() {
                   </svg>
                 </div>
                 <h2 className="mt-6 text-3xl font-bold text-gray-900">
-                  Welcome to Festify!
+                  User Created Successfully!
                 </h2>
                 <p className="mt-2 text-base text-gray-600">
-                  Your account has been created successfully
+                  Your account has been created successfully. Please login to continue.
                 </p>
                 <div className="mt-6">
                   <div className="inline-flex items-center px-4 py-2 rounded-full bg-green-50 text-green-700 text-sm font-medium">
@@ -117,7 +99,7 @@ export default function RegisterPage() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Redirecting to your dashboard...
+                    Redirecting to login page...
                   </div>
                 </div>
               </div>

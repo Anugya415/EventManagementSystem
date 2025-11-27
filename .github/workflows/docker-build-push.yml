@@ -3,15 +3,8 @@ name: Build and Push Docker Images
 on:
   push:
     branches: [ main, develop ]
-    paths:
-      - 'event/**'
-      - 'backend/**'
-      - '.github/workflows/docker-build-push.yml'
   pull_request:
     branches: [ main ]
-    paths:
-      - 'event/**'
-      - 'backend/**'
   workflow_dispatch:
     inputs:
       push_to_registry:
@@ -49,7 +42,7 @@ jobs:
 
   build-frontend:
     needs: detect-changes
-    if: needs.detect-changes.outputs.frontend-changed == 'true' || github.event_name == 'workflow_dispatch'
+    if: always() && (needs.detect-changes.outputs.frontend-changed == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'push')
     runs-on: ubuntu-latest
     
     steps:
@@ -102,7 +95,7 @@ jobs:
 
   build-backend:
     needs: detect-changes
-    if: needs.detect-changes.outputs.backend-changed == 'true' || github.event_name == 'workflow_dispatch'
+    if: always() && (needs.detect-changes.outputs.backend-changed == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'push')
     runs-on: ubuntu-latest
     
     steps:

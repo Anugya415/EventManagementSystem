@@ -20,66 +20,83 @@ export default function TopNavigation() {
   };
 
   return (
-    <nav className="bg-gradient-to-r from-blue-600 to-purple-700 shadow-lg border-b border-blue-500/20 sticky top-0 z-50">
+    <nav className="bg-white/95 backdrop-blur-md shadow-xl border-b border-gray-200/50 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href={isAuthenticated ? "/dashboard" : "/"} className="flex items-center space-x-3 group">
-              <div className="text-3xl transform group-hover:scale-110 transition-transform duration-200">🎪</div>
-              <span className="text-2xl font-bold text-white group-hover:text-blue-200 transition-colors duration-200">
-                Festify
-              </span>
+              <div className="relative">
+                <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                  <span className="text-2xl">🎪</span>
+                </div>
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-pink-400 to-red-400 rounded-full animate-pulse"></div>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent group-hover:from-purple-600 group-hover:to-pink-600 transition-all duration-300">
+                  Festify
+                </span>
+                <span className="text-xs text-gray-500 font-medium">Event Management</span>
+              </div>
             </Link>
           </div>
 
           {/* Desktop Navigation Items */}
           <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-1">
+            <div className="ml-10 flex items-center space-x-2">
               <Link 
                 href="/" 
-                className="text-white/90 hover:text-white hover:bg-white/10 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-md"
+                className="relative text-gray-700 hover:text-indigo-600 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 hover:bg-indigo-50 group"
               >
-                Home
+                <span className="relative z-10">Home</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
               </Link>
               <Link 
                 href="/events" 
-                className="text-white/90 hover:text-white hover:bg-white/10 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-md"
+                className="relative text-gray-700 hover:text-indigo-600 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 hover:bg-indigo-50 group"
               >
-                Events
+                <span className="relative z-10">Events</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
               </Link>
               <Link 
                 href="/about" 
-                className="text-white/90 hover:text-white hover:bg-white/10 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-md"
+                className="relative text-gray-700 hover:text-indigo-600 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 hover:bg-indigo-50 group"
               >
-                About
+                <span className="relative z-10">About</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
               </Link>
               <Link 
                 href="/contact" 
-                className="text-white/90 hover:text-white hover:bg-white/10 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-md"
+                className="relative text-gray-700 hover:text-indigo-600 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 hover:bg-indigo-50 group"
               >
-                Contact
+                <span className="relative z-10">Contact</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
               </Link>
             </div>
           </div>
 
           {/* Auth Buttons */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-4">
             {isAuthenticated ? (
-              <div className="flex items-center space-x-3">
-                <div className="hidden sm:flex items-center space-x-2 bg-white/10 rounded-full px-3 py-1">
-                  <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
-                    <span className="text-xs font-bold text-white">
+              <div className="flex items-center space-x-4">
+                <div className="hidden sm:flex items-center space-x-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl px-4 py-2 border border-indigo-100">
+                  <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center shadow-md">
+                    <span className="text-sm font-bold text-white">
                       {user?.name?.charAt(0)?.toUpperCase()}
                     </span>
                   </div>
-                  <span className="text-white/90 text-sm font-medium">
-                    {user?.name}
-                  </span>
+                  <div className="flex flex-col">
+                    <span className="text-gray-800 text-sm font-semibold">
+                      {user?.name}
+                    </span>
+                    <span className="text-gray-500 text-xs">
+                      {user?.roles?.[0] || 'User'}
+                    </span>
+                  </div>
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-md backdrop-blur-sm"
+                  className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 hover:shadow-lg hover:scale-105 transform"
                 >
                   Logout
                 </button>
@@ -88,13 +105,13 @@ export default function TopNavigation() {
               <div className="flex items-center space-x-3">
                 <Link
                   href="/login"
-                  className="text-white/90 hover:text-white hover:bg-white/10 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-md"
+                  className="text-gray-700 hover:text-indigo-600 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 hover:bg-indigo-50"
                 >
                   Login
                 </Link>
                 <Link
                   href="/register"
-                  className="bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-md hover:scale-105 transform"
+                  className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 hover:shadow-lg hover:scale-105 transform shadow-md"
                 >
                   Sign Up
                 </Link>
@@ -104,7 +121,7 @@ export default function TopNavigation() {
             {/* Mobile menu button */}
             <button
               onClick={toggleMobileMenu}
-              className="md:hidden text-white hover:bg-white/10 p-2 rounded-lg transition-colors duration-200"
+              className="md:hidden text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 p-2 rounded-xl transition-all duration-300"
               aria-label="Toggle mobile menu"
             >
               <svg
@@ -140,31 +157,31 @@ export default function TopNavigation() {
           ? 'max-h-96 opacity-100' 
           : 'max-h-0 opacity-0 overflow-hidden'
       }`}>
-        <div className="px-4 pt-2 pb-3 space-y-1 bg-white/10 backdrop-blur-sm border-t border-white/20">
+        <div className="px-4 pt-2 pb-3 space-y-1 bg-gradient-to-r from-indigo-50 to-purple-50 backdrop-blur-sm border-t border-indigo-100">
           <Link 
             href="/" 
-            className="text-white/90 hover:text-white hover:bg-white/10 block px-4 py-3 rounded-lg text-base font-medium transition-all duration-200"
+            className="text-gray-700 hover:text-indigo-600 hover:bg-indigo-100 block px-4 py-3 rounded-xl text-base font-semibold transition-all duration-300"
             onClick={() => setIsMobileMenuOpen(false)}
           >
             Home
           </Link>
           <Link 
             href="/events" 
-            className="text-white/90 hover:text-white hover:bg-white/10 block px-4 py-3 rounded-lg text-base font-medium transition-all duration-200"
+            className="text-gray-700 hover:text-indigo-600 hover:bg-indigo-100 block px-4 py-3 rounded-xl text-base font-semibold transition-all duration-300"
             onClick={() => setIsMobileMenuOpen(false)}
           >
             Events
           </Link>
           <Link 
             href="/about" 
-            className="text-white/90 hover:text-white hover:bg-white/10 block px-4 py-3 rounded-lg text-base font-medium transition-all duration-200"
+            className="text-gray-700 hover:text-indigo-600 hover:bg-indigo-100 block px-4 py-3 rounded-xl text-base font-semibold transition-all duration-300"
             onClick={() => setIsMobileMenuOpen(false)}
           >
             About
           </Link>
           <Link 
             href="/contact" 
-            className="text-white/90 hover:text-white hover:bg-white/10 block px-4 py-3 rounded-lg text-base font-medium transition-all duration-200"
+            className="text-gray-700 hover:text-indigo-600 hover:bg-indigo-100 block px-4 py-3 rounded-xl text-base font-semibold transition-all duration-300"
             onClick={() => setIsMobileMenuOpen(false)}
           >
             Contact
@@ -172,17 +189,17 @@ export default function TopNavigation() {
           
           {/* Mobile auth section */}
           {!isAuthenticated && (
-            <div className="pt-4 border-t border-white/20 space-y-2">
+            <div className="pt-4 border-t border-indigo-200 space-y-2">
               <Link
                 href="/login"
-                className="text-white/90 hover:text-white hover:bg-white/10 block px-4 py-3 rounded-lg text-base font-medium transition-all duration-200"
+                className="text-gray-700 hover:text-indigo-600 hover:bg-indigo-100 block px-4 py-3 rounded-xl text-base font-semibold transition-all duration-300"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Login
               </Link>
               <Link
                 href="/register"
-                className="bg-white text-blue-600 hover:bg-blue-50 block px-4 py-3 rounded-lg text-base font-medium transition-all duration-200 text-center"
+                className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-600 hover:to-purple-700 block px-4 py-3 rounded-xl text-base font-semibold transition-all duration-300 text-center shadow-md"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Sign Up
