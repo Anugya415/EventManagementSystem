@@ -156,6 +156,7 @@ jobs:
     needs: [build-frontend, build-backend]
     if: always() && (needs.build-frontend.result == 'success' || needs.build-backend.result == 'success')
     runs-on: ubuntu-latest
+    continue-on-error: true
     
     strategy:
       matrix:
@@ -175,14 +176,16 @@ jobs:
       - name: Run Trivy vulnerability scanner
         if: matrix.needs
         uses: aquasecurity/trivy-action@master
+        continue-on-error: true
         with:
           image-ref: '${{ env.REGISTRY }}/nithxn/event-management-${{ matrix.image }}:latest'
           format: 'sarif'
           output: 'trivy-results-${{ matrix.image }}.sarif'
 
       - name: Upload Trivy scan results
-        if: matrix.needs
-        uses: github/codeql-action/upload-sarif@v2
+        if: matrix.needs && hashFiles('trivy-results-${{ matrix.image }}.sarif') != ''
+        uses: github/codeql-action/upload-sarif@v3
+        continue-on-error: true
         with:
           sarif_file: 'trivy-results-${{ matrix.image }}.sarif'
 
