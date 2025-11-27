@@ -1,6 +1,6 @@
 # Multi-stage build for Java Spring Boot application
 # Stage 1: Build the application
-FROM amazoncorretto:17-alpine as build
+FROM amazoncorretto:17-alpine AS build
 
 # Install Maven
 RUN apk add --no-cache maven

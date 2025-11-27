@@ -1,5 +1,5 @@
 # Use Node.js 18 Alpine as base image for smaller size
-FROM node:18-alpine as build
+FROM node:18-alpine AS build
 
 # Set working directory
 WORKDIR /app
@@ -21,7 +21,7 @@ ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 RUN npm run build
 
 # Production stage
-FROM node:18-alpine as production
+FROM node:18-alpine AS production
 
 # Set working directory
 WORKDIR /app

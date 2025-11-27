@@ -15,8 +15,8 @@ on:
 
 env:
   REGISTRY: docker.io
-  FRONTEND_IMAGE_NAME: ${{ github.repository_owner }}/event-management-frontend
-  BACKEND_IMAGE_NAME: ${{ github.repository_owner }}/event-management-backend
+  FRONTEND_IMAGE_NAME: nithxn/event-management-frontend
+  BACKEND_IMAGE_NAME: nithxn/event-management-backend
 
 jobs:
   detect-changes:
@@ -168,7 +168,7 @@ jobs:
         if: matrix.needs
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: '${{ env.REGISTRY }}/${{ github.repository_owner }}/event-management-${{ matrix.image }}:latest'
+          image-ref: '${{ env.REGISTRY }}/nithxn/event-management-${{ matrix.image }}:latest'
           format: 'sarif'
           output: 'trivy-results-${{ matrix.image }}.sarif'
 
