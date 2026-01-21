@@ -1,0 +1,41 @@
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+import AppLayout from "../components/AppLayout";
+import { AuthProvider } from "../components/AuthContext";
+import { NotificationProvider } from "../components/NotificationContext";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata = {
+  title: "Festify - Event Management System",
+  description: "Professional event management system for planning and organizing conferences, weddings, and workshops",
+};
+
+import { Toaster } from "../components/ui/toaster";
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <AuthProvider>
+          <NotificationProvider>
+            <AppLayout>
+              {children}
+            </AppLayout>
+            <Toaster />
+          </NotificationProvider>
+        </AuthProvider>
+      </body>
+    </html>
+  );
+}
